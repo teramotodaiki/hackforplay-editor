@@ -3,9 +3,24 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <style media="screen">
+      iframe.h4p__editor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        border: 0 none;
+        width: 100vw;
+        height: 100vh;
+
+        /* extra settings */
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    </style>
   </head>
   <body>
     Welcome hackforplay-editor<br />
     <a href="https://github.com/teramotodaiki/hackforplay-editor">GitHub</a>
+    <iframe class="h4p__editor" src="./editor.html"></iframe>
   </body>
 </html>
