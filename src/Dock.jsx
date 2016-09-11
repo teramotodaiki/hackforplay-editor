@@ -41,7 +41,8 @@ export default class Dock extends Component {
 
 Dock.propTypes = {
   align: PropTypes.string.isRequired,
-  width: PropTypes.number.isRequired
+  width: PropTypes.number.isRequired,
+  setDockSize: PropTypes.func.isRequired
 };
 
 const Sizer = ({onDragEnd, align}) => (
