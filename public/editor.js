@@ -21522,8 +21522,19 @@
 	        _react2.default.createElement(
 	          _Dock2.default,
 	          { align: align, width: width, setDockSize: this.setDockSize },
-	          _react2.default.createElement(_Menu2.default, { align: align, setDockAlign: this.setDockAlign }),
-	          _react2.default.createElement(_Pane2.default, null)
+	          _react2.default.createElement(
+	            'div',
+	            { style: { display: 'flex', flexDirection: 'column', height: '100vh' } },
+	            _react2.default.createElement(_Menu2.default, {
+	              align: align,
+	              setDockAlign: this.setDockAlign,
+	              style: { flex: '0 0 auto' }
+	            }),
+	            _react2.default.createElement(_Pane2.default, {
+	              width: width,
+	              style: { flex: '1 1 auto', overflowY: 'scroll' }
+	            })
+	          )
 	        )
 	      );
 	    }
@@ -58658,6 +58669,13 @@
 	  }
 
 	  _createClass(Pane, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var cm = this.editor && this.editor.getCodeMirror();
+	      if (!cm) return;
+	      cm.setSize(null, '100vh');
+	    }
+	  }, {
 	    key: 'updateCode',
 	    value: function updateCode(code) {
 	      this.setState({ code: code });
@@ -58665,20 +58683,26 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var code = this.state.code;
+	      var _this2 = this;
 
-	      var option = {
+	      var code = this.state.code;
+	      var style = this.props.style;
+
+	      var options = {
 	        lineNumbers: true,
 	        mode: 'javascript'
 	      };
 
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { style: style },
 	        _react2.default.createElement(_reactCodemirror2.default, {
+	          ref: function ref(_ref) {
+	            return _this2.editor = _ref;
+	          },
 	          value: code,
 	          onChange: this.updateCode,
-	          option: option
+	          options: options
 	        })
 	      );
 	    }
@@ -58690,7 +58714,9 @@
 	exports.default = Pane;
 
 
-	Pane.propTypes = {};
+	Pane.propTypes = {
+	  style: _react.PropTypes.object.isRequired
+	};
 
 /***/ },
 /* 537 */
@@ -68237,9 +68263,12 @@
 	  _createClass(Menu, [{
 	    key: 'render',
 	    value: function render() {
+	      var style = this.props.style;
+
+
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { style: style },
 	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_swapHoriz2.default, null), onClick: this.swapClicked })
 	      );
 	    }
@@ -68253,7 +68282,8 @@
 
 	Menu.propTypes = {
 	  align: _react.PropTypes.string.isRequired,
-	  setDockAlign: _react.PropTypes.func.isRequired
+	  setDockAlign: _react.PropTypes.func.isRequired,
+	  style: _react.PropTypes.object.isRequired
 	};
 
 /***/ },
