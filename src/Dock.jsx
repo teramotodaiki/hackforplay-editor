@@ -6,23 +6,16 @@ const SizerWidth = 4;
 export default class Dock extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      align: 'left',
-      width: innerWidth / 2
-    };
-
-    this.setSize = this.setSize.bind(this);
   }
 
-  setSize(event) {
+  sizerMoved = (event) => {
     const x = event.nativeEvent.x;
-    const width = this.state.align === 'right' ? innerWidth - x : x + SizerWidth;
-    this.setState({width});
+    const width = this.props.align === 'right' ? innerWidth - x : x + SizerWidth;
+    this.props.setDockSize({width});
   }
 
   render() {
-    const {align, width} = this.state;
+    const {align, width} = this.props;
 
     const style = {
       display: 'flex',
@@ -34,7 +27,7 @@ export default class Dock extends Component {
       <Drawer open={true} openSecondary={align === 'right'} width={width}>
         <div style={style}>
           <Sizer
-            onDragEnd={this.setSize}
+            onDragEnd={this.sizerMoved}
             align={align}
           ></Sizer>
           <div style={{ flex: '1 1 auto' }}>
@@ -47,6 +40,8 @@ export default class Dock extends Component {
 }
 
 Dock.propTypes = {
+  align: PropTypes.string.isRequired,
+  width: PropTypes.number.isRequired
 };
 
 const Sizer = ({onDragEnd, align}) => (

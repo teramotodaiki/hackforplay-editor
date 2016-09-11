@@ -16,12 +16,23 @@ import Pane from './Pane';
 export default class Main extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      align: 'right',
+      width: innerWidth / 2
+    };
+  }
+
+  setDockSize = ({width}) => {
+    this.setState({width});
   }
 
   render() {
+    const {align, width} = this.state;
+
     return (
       <MuiThemeProvider>
-        <Dock>
+        <Dock align={align} width={width} setDockSize={this.setDockSize}>
           <Pane />
         </Dock>
       </MuiThemeProvider>
