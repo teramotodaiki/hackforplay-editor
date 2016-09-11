@@ -9,8 +9,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 
-
 import Dock from './Dock';
+import Menu from './Menu';
 import Pane from './Pane';
 
 export default class Main extends Component {
@@ -27,12 +27,17 @@ export default class Main extends Component {
     this.setState({width});
   }
 
+  setDockAlign = (align) => {
+    this.setState({align});
+  }
+
   render() {
     const {align, width} = this.state;
 
     return (
       <MuiThemeProvider>
         <Dock align={align} width={width} setDockSize={this.setDockSize}>
+          <Menu align={align} setDockAlign={this.setDockAlign} />
           <Pane />
         </Dock>
       </MuiThemeProvider>
