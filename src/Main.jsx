@@ -11,6 +11,7 @@ injectTapEventPlugin();
 
 
 import Dock from './Dock';
+import Pane from './Pane';
 
 export default class Main extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class Main extends Component {
     return (
       <MuiThemeProvider>
         <Dock>
-          Pane
+          <Pane />
         </Dock>
       </MuiThemeProvider>
     );
