@@ -21,7 +21,7 @@ export default class Pane extends Component {
 
   render() {
     const {code} = this.state;
-    const option = {
+    const options = {
       lineNumbers: true,
       mode: 'javascript'
     };
@@ -31,7 +31,7 @@ export default class Pane extends Component {
         <CodeMirror
           value={code}
           onChange={this.updateCode}
-          option={option}
+          options={options}
         />
       </div>
     );
