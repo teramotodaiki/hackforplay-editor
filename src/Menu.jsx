@@ -13,8 +13,10 @@ export default class Menu extends Component {
   }
 
   render() {
+    const {style} = this.props;
+    
     return (
-      <div>
+      <div style={style}>
         <FlatButton icon={<SwapHoriz />} onClick={this.swapClicked}></FlatButton>
       </div>
     );
@@ -23,5 +25,6 @@ export default class Menu extends Component {
 
 Menu.propTypes = {
   align: PropTypes.string.isRequired,
-  setDockAlign: PropTypes.func.isRequired
+  setDockAlign: PropTypes.func.isRequired,
+  style: PropTypes.object.isRequired
 };

@@ -15,23 +15,31 @@ export default class Pane extends Component {
     this.updateCode = this.updateCode.bind(this);
   }
 
+  componentDidMount() {
+    const cm = this.editor && this.editor.getCodeMirror();
+    if (!cm) return;
+    cm.setSize(null, '100vh');
+  }
+
   updateCode(code) {
     this.setState({code});
   }
 
   render() {
     const {code} = this.state;
-    const option = {
+    const {style} = this.props;
+    const options = {
       lineNumbers: true,
       mode: 'javascript'
     };
 
     return (
-      <div>
+      <div style={style}>
         <CodeMirror
+          ref={(ref) => this.editor = ref}
           value={code}
           onChange={this.updateCode}
-          option={option}
+          options={options}
         />
       </div>
     );
@@ -39,4 +47,5 @@ export default class Pane extends Component {
 }
 
 Pane.propTypes = {
+  style: PropTypes.object.isRequired
 };
