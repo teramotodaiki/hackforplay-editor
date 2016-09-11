@@ -21463,6 +21463,10 @@
 
 	var _Dock2 = _interopRequireDefault(_Dock);
 
+	var _Menu = __webpack_require__(541);
+
+	var _Menu2 = _interopRequireDefault(_Menu);
+
 	var _Pane = __webpack_require__(536);
 
 	var _Pane2 = _interopRequireDefault(_Pane);
@@ -21485,18 +21489,40 @@
 	  function Main(props) {
 	    _classCallCheck(this, Main);
 
-	    return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+
+	    _this.setDockSize = function (_ref) {
+	      var width = _ref.width;
+
+	      _this.setState({ width: width });
+	    };
+
+	    _this.setDockAlign = function (align) {
+	      _this.setState({ align: align });
+	    };
+
+	    _this.state = {
+	      align: 'right',
+	      width: innerWidth / 2
+	    };
+	    return _this;
 	  }
 
 	  _createClass(Main, [{
 	    key: 'render',
 	    value: function render() {
+	      var _state = this.state;
+	      var align = _state.align;
+	      var width = _state.width;
+
+
 	      return _react2.default.createElement(
 	        _MuiThemeProvider2.default,
 	        null,
 	        _react2.default.createElement(
 	          _Dock2.default,
-	          null,
+	          { align: align, width: width, setDockSize: this.setDockSize },
+	          _react2.default.createElement(_Menu2.default, { align: align, setDockAlign: this.setDockAlign }),
 	          _react2.default.createElement(_Pane2.default, null)
 	        )
 	      );
@@ -28720,28 +28746,21 @@
 
 	    var _this = _possibleConstructorReturn(this, (Dock.__proto__ || Object.getPrototypeOf(Dock)).call(this, props));
 
-	    _this.state = {
-	      align: 'left',
-	      width: innerWidth / 2
+	    _this.sizerMoved = function (event) {
+	      var x = event.nativeEvent.x;
+	      var width = _this.props.align === 'right' ? innerWidth - x : x + SizerWidth;
+	      _this.props.setDockSize({ width: width });
 	    };
 
-	    _this.setSize = _this.setSize.bind(_this);
 	    return _this;
 	  }
 
 	  _createClass(Dock, [{
-	    key: 'setSize',
-	    value: function setSize(event) {
-	      var x = event.nativeEvent.x;
-	      var width = this.state.align === 'right' ? innerWidth - x : x + SizerWidth;
-	      this.setState({ width: width });
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _state = this.state;
-	      var align = _state.align;
-	      var width = _state.width;
+	      var _props = this.props;
+	      var align = _props.align;
+	      var width = _props.width;
 
 
 	      var style = {
@@ -28757,7 +28776,7 @@
 	          'div',
 	          { style: style },
 	          _react2.default.createElement(Sizer, {
-	            onDragEnd: this.setSize,
+	            onDragEnd: this.sizerMoved,
 	            align: align
 	          }),
 	          _react2.default.createElement(
@@ -28776,7 +28795,11 @@
 	exports.default = Dock;
 
 
-	Dock.propTypes = {};
+	Dock.propTypes = {
+	  align: _react.PropTypes.string.isRequired,
+	  width: _react.PropTypes.number.isRequired,
+	  setDockSize: _react.PropTypes.func.isRequired
+	};
 
 	var Sizer = function Sizer(_ref) {
 	  var onDragEnd = _ref.onDragEnd;
@@ -28785,6 +28808,9 @@
 	    draggable: 'true',
 	    style: {
 	      flex: '0 0 ' + SizerWidth + 'px',
+	      marginLeft: align === 'left' ? -SizerWidth : 0,
+	      marginRight: align === 'right' ? -SizerWidth : 0,
+	      zIndex: 100,
 	      height: '100vh',
 	      cursor: align === 'right' ? 'w-resize' : 'e-resize'
 	    },
@@ -58612,8 +58638,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	__webpack_require__(541);
 	__webpack_require__(542);
+	__webpack_require__(543);
 
 	var Pane = function (_Component) {
 	  _inherits(Pane, _Component);
@@ -68163,6 +68189,77 @@
 /* 541 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _materialUi = __webpack_require__(337);
+
+	var _swapHoriz = __webpack_require__(547);
+
+	var _swapHoriz2 = _interopRequireDefault(_swapHoriz);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Menu = function (_Component) {
+	  _inherits(Menu, _Component);
+
+	  function Menu(props) {
+	    _classCallCheck(this, Menu);
+
+	    var _this = _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
+
+	    _this.swapClicked = function (event) {
+	      var _this$props = _this.props;
+	      var align = _this$props.align;
+	      var setDockAlign = _this$props.setDockAlign;
+
+	      setDockAlign(align === 'right' ? 'left' : 'right');
+	    };
+
+	    return _this;
+	  }
+
+	  _createClass(Menu, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_swapHoriz2.default, null), onClick: this.swapClicked })
+	      );
+	    }
+	  }]);
+
+	  return Menu;
+	}(_react.Component);
+
+	exports.default = Menu;
+
+
+	Menu.propTypes = {
+	  align: _react.PropTypes.string.isRequired,
+	  setDockAlign: _react.PropTypes.func.isRequired
+	};
+
+/***/ },
+/* 542 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
 	// Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -68928,16 +69025,16 @@
 
 
 /***/ },
-/* 542 */
+/* 543 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(543);
+	var content = __webpack_require__(544);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(545)(content, {});
+	var update = __webpack_require__(546)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -68954,10 +69051,10 @@
 	}
 
 /***/ },
-/* 543 */
+/* 544 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(544)();
+	exports = module.exports = __webpack_require__(545)();
 	// imports
 
 
@@ -68968,7 +69065,7 @@
 
 
 /***/ },
-/* 544 */
+/* 545 */
 /***/ function(module, exports) {
 
 	/*
@@ -69024,7 +69121,7 @@
 
 
 /***/ },
-/* 545 */
+/* 546 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -69274,6 +69371,43 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 547 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _pure = __webpack_require__(367);
+
+	var _pure2 = _interopRequireDefault(_pure);
+
+	var _SvgIcon = __webpack_require__(376);
+
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ActionSwapHoriz = function ActionSwapHoriz(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z' })
+	  );
+	};
+	ActionSwapHoriz = (0, _pure2.default)(ActionSwapHoriz);
+	ActionSwapHoriz.displayName = 'ActionSwapHoriz';
+	ActionSwapHoriz.muiName = 'SvgIcon';
+
+	exports.default = ActionSwapHoriz;
 
 /***/ }
 /******/ ]);
