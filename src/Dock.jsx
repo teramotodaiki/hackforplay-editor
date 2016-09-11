@@ -53,7 +53,7 @@ const Sizer = ({onDragEnd, align}) => (
   <div
     draggable="true"
     style={{
-      width: SizerWidth,
+      flex: `0 0 ${SizerWidth}px`,
       height: '100vh',
       cursor: align === 'right' ? 'w-resize' : 'e-resize'
     }}
