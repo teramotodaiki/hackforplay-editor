@@ -5,5 +5,5 @@ import Main from './Main';
 
 render(
   <Main></Main>,
-  document.body
+  document.getElementById('app')
 );

@@ -1,3 +1,4 @@
+const WebpackNotifierPlugin = require('webpack-notifier');
 const path = require('path');
 
 module.exports = {
@@ -17,5 +18,8 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.jsx']
-  }
+  },
+  plugins: [
+    new WebpackNotifierPlugin()
+  ]
 };
