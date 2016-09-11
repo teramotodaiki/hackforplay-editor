@@ -27,13 +27,14 @@ export default class Pane extends Component {
 
   render() {
     const {code} = this.state;
+    const {style} = this.props;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
     };
 
     return (
-      <div>
+      <div style={style}>
         <CodeMirror
           ref={(ref) => this.editor = ref}
           value={code}
@@ -46,4 +47,5 @@ export default class Pane extends Component {
 }
 
 Pane.propTypes = {
+  style: PropTypes.object.isRequired
 };

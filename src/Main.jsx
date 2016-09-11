@@ -37,8 +37,17 @@ export default class Main extends Component {
     return (
       <MuiThemeProvider>
         <Dock align={align} width={width} setDockSize={this.setDockSize}>
-          <Menu align={align} setDockAlign={this.setDockAlign} />
-          <Pane />
+          <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <Menu
+              align={align}
+              setDockAlign={this.setDockAlign}
+              style={{ flex: '0 0 auto' }}
+            />
+            <Pane
+              width={width}
+              style={{ flex: '1 1 auto', overflowY: 'scroll' }}
+            />
+          </div>
         </Dock>
       </MuiThemeProvider>
     );
