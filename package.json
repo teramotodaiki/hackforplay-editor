@@ -1,10 +1,20 @@
 {
   "name": "hackforplay-editor",
   "version": "0.0.0",
-  "private": true,
+  "description": "To provide an environment for executing the content of the open source HackforPlay オープンソースHackforPlayのコンテンツを実行するための環境を提供する",
   "scripts": {
     "start": "node ./bin/www"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teramotodaiki/hackforplay-editor.git"
+  },
+  "author": "teramotodaiki <i101323@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teramotodaiki/hackforplay-editor/issues"
+  },
+  "homepage": "https://github.com/teramotodaiki/hackforplay-editor#readme",
   "dependencies": {
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
