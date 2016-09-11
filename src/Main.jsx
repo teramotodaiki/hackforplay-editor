@@ -10,6 +10,8 @@ injectTapEventPlugin();
 
 
 
+import Dock from './Dock';
+
 export default class Main extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +20,9 @@ export default class Main extends Component {
   render() {
     return (
       <MuiThemeProvider>
+        <Dock>
+          Pane
+        </Dock>
       </MuiThemeProvider>
     );
   }
