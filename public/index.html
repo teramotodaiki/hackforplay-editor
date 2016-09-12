@@ -12,6 +12,7 @@
       margin: 0;
     }
     .h4p__iframe_container>iframe {
+      display: block;
       position: fixed;
       z-index: 1;
       border: 0 none;
@@ -95,7 +96,7 @@
       if (!frame) return;
 
       var style = frame.currentStyle || document.defaultView.getComputedStyle(frame, '');
-      frame.style.visibility = style.visibility === 'visible' ? 'hidden' : 'visible';
+      frame.style.display = style.display === 'none' ? 'block' : 'none';
     }
 
     </script>
