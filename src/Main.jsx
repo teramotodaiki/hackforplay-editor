@@ -18,26 +18,31 @@ export default class Main extends Component {
   constructor(props) {
     super(props);
 
-    new Model({})
-      .then(parent => {
-        this.parent = parent;
-        const files = parent.model.files;
-        this.setState({files});
-      });
+    new Model({
+      view: this.getViewState
+    }).then(parent => {
+      this.parent = parent;
+      const {align, edge, files} = parent.model;
+      this.setState({align, edge, files});
+    });
 
     this.state = {
-      align: 'right',
-      width: innerWidth / 2,
+      align: '',
+      edge: { x: 0, y: 0 },
       files: []
     };
   }
 
-  setDockSize = ({width}) => {
-    this.setState({width});
+  setDockSize = ({x, y}) => {
+    const edge = {
+      x: typeof x === 'number' ? x : this.state.edge.x,
+      y: typeof y === 'number' ? y : this.state.edge.y
+    };
+    this.setState({edge}, this.renderRequest);
   }
 
   setDockAlign = (align) => {
-    this.setState({align});
+    this.setState({align}, this.renderRequest);
   }
 
   updateFile = (index, file) => {
@@ -50,27 +55,34 @@ export default class Main extends Component {
     this.parent.emit('run', this.state.files);
   }
 
+  renderRequest = () => {
+    if (!this.parent) return;
+    this.parent.emit('render', this.getViewState());
+  }
+
+  getViewState = () => {
+    const {align, edge} = this.state;
+    return {align, edge};
+  }
+
   render() {
-    const {align, width, files} = this.state;
+    const {align, edge, files} = this.state;
 
     return (
       <MuiThemeProvider>
-        <Dock align={align} width={width} setDockSize={this.setDockSize}>
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <Menu
-              align={align}
-              files={files}
-              setDockAlign={this.setDockAlign}
-              runRequest={this.runRequest}
-              style={{ flex: '0 0 auto' }}
-            />
-            <Pane
-              width={width}
-              files={files}
-              updateFile={this.updateFile}
-              style={{ flex: '1 1 auto', overflowY: 'scroll' }}
-            />
-          </div>
+        <Dock align={align} edge={edge} setDockSize={this.setDockSize}>
+          <Menu
+            align={align}
+            files={files}
+            setDockAlign={this.setDockAlign}
+            runRequest={this.runRequest}
+            style={{ flex: '0 0 auto' }}
+          />
+          <Pane
+            files={files}
+            updateFile={this.updateFile}
+            style={{ flex: '1 1 auto' }}
+          />
         </Dock>
       </MuiThemeProvider>
     );

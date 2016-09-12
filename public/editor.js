@@ -21469,7 +21469,7 @@
 
 	var _Menu2 = _interopRequireDefault(_Menu);
 
-	var _Pane = __webpack_require__(542);
+	var _Pane = __webpack_require__(544);
 
 	var _Pane2 = _interopRequireDefault(_Pane);
 
@@ -21494,13 +21494,18 @@
 	    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
 
 	    _this.setDockSize = function (_ref) {
-	      var width = _ref.width;
+	      var x = _ref.x;
+	      var y = _ref.y;
 
-	      _this.setState({ width: width });
+	      var edge = {
+	        x: typeof x === 'number' ? x : _this.state.edge.x,
+	        y: typeof y === 'number' ? y : _this.state.edge.y
+	      };
+	      _this.setState({ edge: edge }, _this.renderRequest);
 	    };
 
 	    _this.setDockAlign = function (align) {
-	      _this.setState({ align: align });
+	      _this.setState({ align: align }, _this.renderRequest);
 	    };
 
 	    _this.updateFile = function (index, file) {
@@ -21515,15 +21520,34 @@
 	      _this.parent.emit('run', _this.state.files);
 	    };
 
-	    new _LoosePostmate.Model({}).then(function (parent) {
+	    _this.renderRequest = function () {
+	      if (!_this.parent) return;
+	      _this.parent.emit('render', _this.getViewState());
+	    };
+
+	    _this.getViewState = function () {
+	      var _this$state = _this.state;
+	      var align = _this$state.align;
+	      var edge = _this$state.edge;
+
+	      return { align: align, edge: edge };
+	    };
+
+	    new _LoosePostmate.Model({
+	      view: _this.getViewState
+	    }).then(function (parent) {
 	      _this.parent = parent;
-	      var files = parent.model.files;
-	      _this.setState({ files: files });
+	      var _parent$model = parent.model;
+	      var align = _parent$model.align;
+	      var edge = _parent$model.edge;
+	      var files = _parent$model.files;
+
+	      _this.setState({ align: align, edge: edge, files: files });
 	    });
 
 	    _this.state = {
-	      align: 'right',
-	      width: innerWidth / 2,
+	      align: '',
+	      edge: { x: 0, y: 0 },
 	      files: []
 	    };
 	    return _this;
@@ -21534,7 +21558,7 @@
 	    value: function render() {
 	      var _state = this.state;
 	      var align = _state.align;
-	      var width = _state.width;
+	      var edge = _state.edge;
 	      var files = _state.files;
 
 
@@ -21543,24 +21567,19 @@
 	        null,
 	        _react2.default.createElement(
 	          _Dock2.default,
-	          { align: align, width: width, setDockSize: this.setDockSize },
-	          _react2.default.createElement(
-	            'div',
-	            { style: { display: 'flex', flexDirection: 'column', height: '100vh' } },
-	            _react2.default.createElement(_Menu2.default, {
-	              align: align,
-	              files: files,
-	              setDockAlign: this.setDockAlign,
-	              runRequest: this.runRequest,
-	              style: { flex: '0 0 auto' }
-	            }),
-	            _react2.default.createElement(_Pane2.default, {
-	              width: width,
-	              files: files,
-	              updateFile: this.updateFile,
-	              style: { flex: '1 1 auto', overflowY: 'scroll' }
-	            })
-	          )
+	          { align: align, edge: edge, setDockSize: this.setDockSize },
+	          _react2.default.createElement(_Menu2.default, {
+	            align: align,
+	            files: files,
+	            setDockAlign: this.setDockAlign,
+	            runRequest: this.runRequest,
+	            style: { flex: '0 0 auto' }
+	          }),
+	          _react2.default.createElement(_Pane2.default, {
+	            files: files,
+	            updateFile: this.updateFile,
+	            style: { flex: '1 1 auto' }
+	          })
 	        )
 	      );
 	    }
@@ -28824,9 +28843,19 @@
 	    var _this = _possibleConstructorReturn(this, (Dock.__proto__ || Object.getPrototypeOf(Dock)).call(this, props));
 
 	    _this.sizerMoved = function (event) {
-	      var x = event.nativeEvent.x;
-	      var width = _this.props.align === 'right' ? innerWidth - x : x + SizerWidth;
-	      _this.props.setDockSize({ width: width });
+	      var _this$props = _this.props;
+	      var align = _this$props.align;
+	      var setDockSize = _this$props.setDockSize;
+
+	      if (align === 'left' || align === 'right') {
+	        setDockSize({
+	          x: event.nativeEvent.clientX + (align === 'left' ? SizerWidth : 0)
+	        });
+	      } else {
+	        setDockSize({
+	          y: event.nativeEvent.clientY + (align === 'top' ? SizerWidth : 0)
+	        });
+	      }
 	    };
 
 	    return _this;
@@ -28837,30 +28866,29 @@
 	    value: function render() {
 	      var _props = this.props;
 	      var align = _props.align;
-	      var width = _props.width;
+	      var edge = _props.edge;
 
 
 	      var style = {
 	        display: 'flex',
-	        justifyContent: 'stretch',
-	        flexDirection: align === 'right' ? 'row' : 'row-reverse'
+	        flexDirection: 'column',
+	        justifyContent: 'flex-start',
+	        width: '100%',
+	        height: '100%'
 	      };
 
 	      return _react2.default.createElement(
-	        _materialUi.Drawer,
-	        { open: true, openSecondary: align === 'right', width: width },
+	        'div',
+	        { style: { width: '100%', height: '100%' } },
+	        _react2.default.createElement(Sizer, {
+	          align: align,
+	          edge: edge,
+	          onDragEnd: this.sizerMoved
+	        }),
 	        _react2.default.createElement(
 	          'div',
 	          { style: style },
-	          _react2.default.createElement(Sizer, {
-	            onDragEnd: this.sizerMoved,
-	            align: align
-	          }),
-	          _react2.default.createElement(
-	            'div',
-	            { style: { flex: '1 1 auto' } },
-	            this.props.children
-	          )
+	          this.props.children
 	        )
 	      );
 	    }
@@ -28874,22 +28902,29 @@
 
 	Dock.propTypes = {
 	  align: _react.PropTypes.string.isRequired,
-	  width: _react.PropTypes.number.isRequired,
+	  edge: _react.PropTypes.object.isRequired,
 	  setDockSize: _react.PropTypes.func.isRequired
 	};
 
 	var Sizer = function Sizer(_ref) {
 	  var onDragEnd = _ref.onDragEnd;
 	  var align = _ref.align;
+	  var edge = _ref.edge;
+
+
+	  var top_btm = align === 'top' || align === 'bottom';
+	  var cursor = { top: 's', right: 'w', left: 'e', bottom: 'n' }[align] + '-resize';
+
 	  return _react2.default.createElement('div', {
 	    draggable: 'true',
 	    style: {
-	      flex: '0 0 ' + SizerWidth + 'px',
-	      marginLeft: align === 'left' ? -SizerWidth : 0,
-	      marginRight: align === 'right' ? -SizerWidth : 0,
+	      position: 'absolute',
 	      zIndex: 100,
-	      height: '100vh',
-	      cursor: align === 'right' ? 'w-resize' : 'e-resize'
+	      height: top_btm ? SizerWidth : '100%',
+	      width: !top_btm ? SizerWidth : '100%',
+	      top: align === 'top' ? edge.y - SizerWidth : 0,
+	      left: align === 'left' ? edge.x - SizerWidth : 0,
+	      cursor: cursor
 	    },
 	    onDragEnd: onDragEnd
 	  });
@@ -58705,19 +58740,19 @@
 
 	var _materialUi = __webpack_require__(339);
 
-	var _swapHoriz = __webpack_require__(539);
+	var _webAsset = __webpack_require__(539);
 
-	var _swapHoriz2 = _interopRequireDefault(_swapHoriz);
+	var _webAsset2 = _interopRequireDefault(_webAsset);
 
 	var _fileDownload = __webpack_require__(540);
 
 	var _fileDownload2 = _interopRequireDefault(_fileDownload);
 
-	var _powerSettingsNew = __webpack_require__(553);
+	var _powerSettingsNew = __webpack_require__(541);
 
 	var _powerSettingsNew2 = _interopRequireDefault(_powerSettingsNew);
 
-	var _SaveDialog = __webpack_require__(541);
+	var _SaveDialog = __webpack_require__(542);
 
 	var _SaveDialog2 = _interopRequireDefault(_SaveDialog);
 
@@ -58737,12 +58772,8 @@
 
 	    var _this = _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
 
-	    _this.swapClicked = function (event) {
-	      var _this$props = _this.props;
-	      var align = _this$props.align;
-	      var setDockAlign = _this$props.setDockAlign;
-
-	      setDockAlign(align === 'right' ? 'left' : 'right');
+	    _this.handleAlignChange = function (event, index, value) {
+	      _this.props.setDockAlign(value);
 	    };
 
 	    _this.saveClicked = function (event) {
@@ -58775,9 +58806,14 @@
 	      var openSaveDialog = _state.openSaveDialog;
 	      var saveFile = _state.saveFile;
 	      var _props = this.props;
+	      var align = _props.align;
 	      var style = _props.style;
 	      var runRequest = _props.runRequest;
 
+
+	      var rotate = function rotate(deg) {
+	        return { transform: 'rotate(' + deg + 'deg)' };
+	      };
 
 	      return _react2.default.createElement(
 	        'div',
@@ -58789,7 +58825,14 @@
 	        }),
 	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_powerSettingsNew2.default, null), onClick: runRequest }),
 	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_fileDownload2.default, null), onClick: this.saveClicked }),
-	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_swapHoriz2.default, null), onClick: this.swapClicked })
+	        _react2.default.createElement(
+	          _materialUi.DropDownMenu,
+	          { value: align, onChange: this.handleAlignChange },
+	          _react2.default.createElement(_materialUi.MenuItem, { value: 'top', primaryText: 'T', leftIcon: _react2.default.createElement(_webAsset2.default, { style: rotate(0) }) }),
+	          _react2.default.createElement(_materialUi.MenuItem, { value: 'right', primaryText: 'R', leftIcon: _react2.default.createElement(_webAsset2.default, { style: rotate(90) }) }),
+	          _react2.default.createElement(_materialUi.MenuItem, { value: 'left', primaryText: 'L', leftIcon: _react2.default.createElement(_webAsset2.default, { style: rotate(270) }) }),
+	          _react2.default.createElement(_materialUi.MenuItem, { value: 'bottom', primaryText: 'B', leftIcon: _react2.default.createElement(_webAsset2.default, { style: rotate(180) }) })
+	        )
 	      );
 	    }
 	  }]);
@@ -58832,18 +58875,18 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ActionSwapHoriz = function ActionSwapHoriz(props) {
+	var AvWebAsset = function AvWebAsset(props) {
 	  return _react2.default.createElement(
 	    _SvgIcon2.default,
 	    props,
-	    _react2.default.createElement('path', { d: 'M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z' })
+	    _react2.default.createElement('path', { d: 'M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zm0 14H5V8h14v10z' })
 	  );
 	};
-	ActionSwapHoriz = (0, _pure2.default)(ActionSwapHoriz);
-	ActionSwapHoriz.displayName = 'ActionSwapHoriz';
-	ActionSwapHoriz.muiName = 'SvgIcon';
+	AvWebAsset = (0, _pure2.default)(AvWebAsset);
+	AvWebAsset.displayName = 'AvWebAsset';
+	AvWebAsset.muiName = 'SvgIcon';
 
-	exports.default = ActionSwapHoriz;
+	exports.default = AvWebAsset;
 
 /***/ },
 /* 540 */
@@ -58892,6 +58935,43 @@
 	  value: true
 	});
 
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _pure = __webpack_require__(369);
+
+	var _pure2 = _interopRequireDefault(_pure);
+
+	var _SvgIcon = __webpack_require__(378);
+
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ActionPowerSettingsNew = function ActionPowerSettingsNew(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z' })
+	  );
+	};
+	ActionPowerSettingsNew = (0, _pure2.default)(ActionPowerSettingsNew);
+	ActionPowerSettingsNew.displayName = 'ActionPowerSettingsNew';
+	ActionPowerSettingsNew.muiName = 'SvgIcon';
+
+	exports.default = ActionPowerSettingsNew;
+
+/***/ },
+/* 542 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
@@ -58900,7 +58980,7 @@
 
 	var _materialUi = __webpack_require__(339);
 
-	var _save = __webpack_require__(552);
+	var _save = __webpack_require__(543);
 
 	var _save2 = _interopRequireDefault(_save);
 
@@ -59039,7 +59119,44 @@
 	};
 
 /***/ },
-/* 542 */
+/* 543 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _pure = __webpack_require__(369);
+
+	var _pure2 = _interopRequireDefault(_pure);
+
+	var _SvgIcon = __webpack_require__(378);
+
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ContentSave = function ContentSave(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z' })
+	  );
+	};
+	ContentSave = (0, _pure2.default)(ContentSave);
+	ContentSave.displayName = 'ContentSave';
+	ContentSave.muiName = 'SvgIcon';
+
+	exports.default = ContentSave;
+
+/***/ },
+/* 544 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59054,7 +59171,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactCodemirror = __webpack_require__(543);
+	var _reactCodemirror = __webpack_require__(545);
 
 	var _reactCodemirror2 = _interopRequireDefault(_reactCodemirror);
 
@@ -59066,8 +59183,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	__webpack_require__(547);
-	__webpack_require__(548);
+	__webpack_require__(549);
+	__webpack_require__(550);
 
 	var Pane = function (_Component) {
 	  _inherits(Pane, _Component);
@@ -59077,16 +59194,22 @@
 
 	    var _this = _possibleConstructorReturn(this, (Pane.__proto__ || Object.getPrototypeOf(Pane)).call(this, props));
 
+	    _this.getStyle = function (ref) {
+	      _this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+	    };
+
+	    _this.setEnoughHeight = function (ref) {
+	      var cm = ref.getCodeMirror();
+	      window.addEventListener('resize', function () {
+	        return cm.setSize(_this.style.width, _this.style.height);
+	      });
+	    };
+
 	    _this.updateCode = _this.updateCode.bind(_this);
 	    return _this;
 	  }
 
 	  _createClass(Pane, [{
-	    key: 'setEnoughHeight',
-	    value: function setEnoughHeight(ref) {
-	      ref.getCodeMirror().setSize(null, '100vh');
-	    }
-	  }, {
 	    key: 'updateCode',
 	    value: function updateCode(index, code) {
 	      var _props = this.props;
@@ -59111,18 +59234,22 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        { style: style },
-	        files.map(function (file, index) {
-	          return _react2.default.createElement(_reactCodemirror2.default, {
-	            key: file.filename,
-	            ref: _this2.setEnoughHeight,
-	            value: file.code,
-	            onChange: function onChange(code) {
-	              return _this2.updateCode(index, code);
-	            },
-	            options: options
-	          });
-	        })
+	        { ref: this.getStyle, style: style },
+	        _react2.default.createElement(
+	          'div',
+	          { style: { position: 'absolute' } },
+	          files.map(function (file, index) {
+	            return _react2.default.createElement(_reactCodemirror2.default, {
+	              key: file.filename,
+	              ref: _this2.setEnoughHeight,
+	              value: file.code,
+	              onChange: function onChange(code) {
+	                return _this2.updateCode(index, code);
+	              },
+	              options: options
+	            });
+	          })
+	        )
 	      );
 	    }
 	  }]);
@@ -59139,14 +59266,14 @@
 	};
 
 /***/ },
-/* 543 */
+/* 545 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var className = __webpack_require__(544);
-	var debounce = __webpack_require__(545);
+	var className = __webpack_require__(546);
+	var debounce = __webpack_require__(547);
 
 	var CodeMirror = React.createClass({
 		displayName: 'CodeMirror',
@@ -59161,7 +59288,7 @@
 			codeMirrorInstance: React.PropTypes.object
 		},
 		getCodeMirrorInstance: function getCodeMirrorInstance() {
-			return this.props.codeMirrorInstance || __webpack_require__(546);
+			return this.props.codeMirrorInstance || __webpack_require__(548);
 		},
 		getInitialState: function getInitialState() {
 			return {
@@ -59227,7 +59354,7 @@
 	module.exports = CodeMirror;
 
 /***/ },
-/* 544 */
+/* 546 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -59281,7 +59408,7 @@
 
 
 /***/ },
-/* 545 */
+/* 547 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -59665,7 +59792,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 546 */
+/* 548 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -68632,7 +68759,7 @@
 
 
 /***/ },
-/* 547 */
+/* 549 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -68640,7 +68767,7 @@
 
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(546));
+	    mod(__webpack_require__(548));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -69400,16 +69527,16 @@
 
 
 /***/ },
-/* 548 */
+/* 550 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(549);
+	var content = __webpack_require__(551);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(551)(content, {});
+	var update = __webpack_require__(553)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -69426,10 +69553,10 @@
 	}
 
 /***/ },
-/* 549 */
+/* 551 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(550)();
+	exports = module.exports = __webpack_require__(552)();
 	// imports
 
 
@@ -69440,7 +69567,7 @@
 
 
 /***/ },
-/* 550 */
+/* 552 */
 /***/ function(module, exports) {
 
 	/*
@@ -69496,7 +69623,7 @@
 
 
 /***/ },
-/* 551 */
+/* 553 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -69746,80 +69873,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 552 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _pure = __webpack_require__(369);
-
-	var _pure2 = _interopRequireDefault(_pure);
-
-	var _SvgIcon = __webpack_require__(378);
-
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ContentSave = function ContentSave(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z' })
-	  );
-	};
-	ContentSave = (0, _pure2.default)(ContentSave);
-	ContentSave.displayName = 'ContentSave';
-	ContentSave.muiName = 'SvgIcon';
-
-	exports.default = ContentSave;
-
-/***/ },
-/* 553 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _pure = __webpack_require__(369);
-
-	var _pure2 = _interopRequireDefault(_pure);
-
-	var _SvgIcon = __webpack_require__(378);
-
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ActionPowerSettingsNew = function ActionPowerSettingsNew(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z' })
-	  );
-	};
-	ActionPowerSettingsNew = (0, _pure2.default)(ActionPowerSettingsNew);
-	ActionPowerSettingsNew.displayName = 'ActionPowerSettingsNew';
-	ActionPowerSettingsNew.muiName = 'SvgIcon';
-
-	exports.default = ActionPowerSettingsNew;
 
 /***/ }
 /******/ ]);

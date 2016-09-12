@@ -9,54 +9,68 @@ export default class Dock extends Component {
   }
 
   sizerMoved = (event) => {
-    const x = event.nativeEvent.x;
-    const width = this.props.align === 'right' ? innerWidth - x : x + SizerWidth;
-    this.props.setDockSize({width});
+    const {align, setDockSize} = this.props;
+    if (align === 'left' || align === 'right') {
+      setDockSize({
+        x: event.nativeEvent.clientX + (align === 'left' ? SizerWidth : 0)
+      });
+    } else {
+      setDockSize({
+        y: event.nativeEvent.clientY + (align === 'top' ? SizerWidth : 0)
+      });
+    }
   }
 
   render() {
-    const {align, width} = this.props;
+    const {align, edge} = this.props;
 
     const style = {
       display: 'flex',
-      justifyContent: 'stretch',
-      flexDirection: align === 'right' ? 'row' : 'row-reverse'
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      width: '100%',
+      height: '100%',
     };
 
     return (
-      <Drawer open={true} openSecondary={align === 'right'} width={width}>
+      <div style={{ width: '100%', height: '100%' }}>
+        <Sizer
+          align={align}
+          edge={edge}
+          onDragEnd={this.sizerMoved}
+        />
         <div style={style}>
-          <Sizer
-            onDragEnd={this.sizerMoved}
-            align={align}
-          ></Sizer>
-          <div style={{ flex: '1 1 auto' }}>
-            {this.props.children}
-          </div>
+          {this.props.children}
         </div>
-      </Drawer>
+      </div>
     );
   }
 }
 
 Dock.propTypes = {
   align: PropTypes.string.isRequired,
-  width: PropTypes.number.isRequired,
+  edge: PropTypes.object.isRequired,
   setDockSize: PropTypes.func.isRequired
 };
 
-const Sizer = ({onDragEnd, align}) => (
-  <div
-    draggable="true"
-    style={{
-      flex: `0 0 ${SizerWidth}px`,
-      marginLeft: align === 'left' ? -SizerWidth : 0,
-      marginRight: align === 'right' ? -SizerWidth : 0,
-      zIndex: 100,
-      height: '100vh',
-      cursor: align === 'right' ? 'w-resize' : 'e-resize'
-    }}
-    onDragEnd={onDragEnd}
-  >
-  </div>
-);
+const Sizer = ({onDragEnd, align, edge}) => {
+
+  const top_btm = align === 'top' || align === 'bottom';
+  const cursor = { top: 's', right: 'w', left: 'e', bottom: 'n' }[align] + '-resize';
+
+  return (
+    <div
+      draggable="true"
+      style={{
+        position: 'absolute',
+        zIndex: 100,
+        height: top_btm ? SizerWidth : '100%',
+        width: !top_btm ? SizerWidth : '100%',
+        top: align === 'top' ? edge.y - SizerWidth : 0,
+        left: align === 'left' ? edge.x - SizerWidth : 0,
+        cursor
+      }}
+      onDragEnd={onDragEnd}
+    />
+  );
+};
