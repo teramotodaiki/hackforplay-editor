@@ -33,7 +33,11 @@ export default class Main extends Component {
     };
   }
 
-  setDockSize = (edge) => {
+  setDockSize = ({x, y}) => {
+    const edge = {
+      x: typeof x === 'number' ? x : this.state.edge.x,
+      y: typeof y === 'number' ? y : this.state.edge.y
+    };
     this.setState({edge}, this.renderRequest);
   }
 
