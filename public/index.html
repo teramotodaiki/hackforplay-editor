@@ -13,12 +13,9 @@
     }
     .h4p__iframe_container>iframe {
       position: fixed;
-      top: 0;
-      left: 0;
       z-index: 1;
       border: 0 none;
-      width: 100vw;
-      height: 100vh;
+      box-shadow: rgba(0, 0, 0, 0.156863) 0px 3px 10px, rgba(0, 0, 0, 0.227451) 0px 3px 10px;
 
       /* extra settings */
       background-color: rgba(0, 0, 0, 0.1);
@@ -38,6 +35,11 @@
         container: container,
         url: './editor.html',
         model: {
+          align: 'right',
+          edge: {
+            x: innerWidth / 2,
+            y: innerHeight / 2
+          },
           files: [{
             filename: 'main.js',
             code: document.getElementById('example1').textContent.replace(/\n    /g, '\n')
@@ -52,6 +54,38 @@
             eval(file.code);
           });
         });
+
+        child.get('view').then(alignment);
+        child.on('render', alignment);
+
+        function alignment(view) {
+          var x = view.edge.x, y = view.edge.y;
+          switch (view.align) {
+            case 'top':
+              setRect(0, 0, '100vw', y);
+              break;
+            case 'right':
+              setRect(x, 0, innerWidth - x, '100vh');
+              break;
+            case 'left':
+              setRect(0, 0, x, '100vh');
+              break;
+            case 'bottom':
+              setRect(0, y, '100vw', innerHeight - y);
+          }
+        }
+
+        function setRect(left, top, width, height) {
+          var ref = child.frame.style;
+          ref.left = unit(left);
+          ref.top = unit(top);
+          ref.width = unit(width);
+          ref.height = unit(height);
+        }
+
+        function unit(value) {
+          return value + (typeof value === 'number' ? 'px' : '');
+        }
 
       });
     });
