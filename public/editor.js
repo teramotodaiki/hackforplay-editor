@@ -21543,6 +21543,7 @@
 	            { style: { display: 'flex', flexDirection: 'column', height: '100vh' } },
 	            _react2.default.createElement(_Menu2.default, {
 	              align: align,
+	              files: files,
 	              setDockAlign: this.setDockAlign,
 	              style: { flex: '0 0 auto' }
 	            }),
@@ -58673,6 +58674,14 @@
 
 	var _swapHoriz2 = _interopRequireDefault(_swapHoriz);
 
+	var _fileDownload = __webpack_require__(550);
+
+	var _fileDownload2 = _interopRequireDefault(_fileDownload);
+
+	var _SaveDialog = __webpack_require__(551);
+
+	var _SaveDialog2 = _interopRequireDefault(_SaveDialog);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -58697,18 +58706,47 @@
 	      setDockAlign(align === 'right' ? 'left' : 'right');
 	    };
 
+	    _this.saveClicked = function (event) {
+	      var files = _this.props.files;
+
+	      _this.setState({
+	        openSaveDialog: true,
+	        saveFile: files[0]
+	      });
+	    };
+
+	    _this.closeSaveDialog = function () {
+	      _this.setState({
+	        openSaveDialog: false,
+	        saveFile: {}
+	      });
+	    };
+
+	    _this.state = {
+	      openSaveDialog: false,
+	      saveFile: {}
+	    };
 	    return _this;
 	  }
 
 	  _createClass(Menu, [{
 	    key: 'render',
 	    value: function render() {
+	      var _state = this.state;
+	      var openSaveDialog = _state.openSaveDialog;
+	      var saveFile = _state.saveFile;
 	      var style = this.props.style;
 
 
 	      return _react2.default.createElement(
 	        'div',
 	        { style: style },
+	        _react2.default.createElement(_SaveDialog2.default, {
+	          open: openSaveDialog,
+	          file: saveFile,
+	          onRequestClose: this.closeSaveDialog
+	        }),
+	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_fileDownload2.default, null), onClick: this.saveClicked }),
 	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_swapHoriz2.default, null), onClick: this.swapClicked })
 	      );
 	    }
@@ -58722,6 +58760,7 @@
 
 	Menu.propTypes = {
 	  align: _react.PropTypes.string.isRequired,
+	  files: _react.PropTypes.array.isRequired,
 	  setDockAlign: _react.PropTypes.func.isRequired,
 	  style: _react.PropTypes.object.isRequired
 	};
@@ -69502,6 +69541,168 @@
 
 	module.exports = Postmate;
 
+
+/***/ },
+/* 550 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _pure = __webpack_require__(368);
+
+	var _pure2 = _interopRequireDefault(_pure);
+
+	var _SvgIcon = __webpack_require__(377);
+
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FileFileDownload = function FileFileDownload(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z' })
+	  );
+	};
+	FileFileDownload = (0, _pure2.default)(FileFileDownload);
+	FileFileDownload.displayName = 'FileFileDownload';
+	FileFileDownload.muiName = 'SvgIcon';
+
+	exports.default = FileFileDownload;
+
+/***/ },
+/* 551 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _materialUi = __webpack_require__(338);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SaveDialog = function (_Component) {
+	  _inherits(SaveDialog, _Component);
+
+	  function SaveDialog(props) {
+	    _classCallCheck(this, SaveDialog);
+
+	    var _this = _possibleConstructorReturn(this, (SaveDialog.__proto__ || Object.getPrototypeOf(SaveDialog)).call(this, props));
+
+	    _initialiseProps.call(_this);
+
+	    var file = _this.props;
+
+	    _this.state = {
+	      value: null
+	    };
+	    return _this;
+	  }
+
+	  _createClass(SaveDialog, [{
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props;
+	      var open = _props.open;
+	      var file = _props.file;
+	      var onRequestClose = _props.onRequestClose;
+	      var value = this.state.value;
+
+
+	      var filename = value !== null ? value : file.filename;
+	      var actions = [_react2.default.createElement(_materialUi.FlatButton, {
+	        label: 'Cancel',
+	        primary: true,
+	        onTouchTap: this.handleClose
+	      }), _react2.default.createElement(_materialUi.FlatButton, {
+	        label: 'Save',
+	        primary: true,
+	        keyboardFocused: true,
+	        onTouchTap: this.handleSave
+	      })];
+
+	      return _react2.default.createElement(
+	        _materialUi.Dialog,
+	        {
+	          title: 'Save as',
+	          actions: actions,
+	          modal: false,
+	          open: open,
+	          onRequestClose: this.handleClose
+	        },
+	        _react2.default.createElement(_materialUi.TextField, {
+	          value: filename,
+	          onChange: this.handleChange
+	        })
+	      );
+	    }
+	  }]);
+
+	  return SaveDialog;
+	}(_react.Component);
+
+	var _initialiseProps = function _initialiseProps() {
+	  var _this2 = this;
+
+	  this.handleChange = function (event) {
+	    var value = event.target.value;
+	    _this2.setState({ value: value });
+	  };
+
+	  this.handleSave = function () {
+	    var _props2 = _this2.props;
+	    var file = _props2.file;
+	    var onRequestClose = _props2.onRequestClose;
+	    // download
+
+	    var event = document.createEvent("MouseEvents");
+	    event.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	    var elem = document.createElement('a');
+	    elem.download = _this2.state.value || file.filename;
+	    elem.href = URL.createObjectURL(new Blob([file.code]));
+	    elem.dispatchEvent(event);
+
+	    _this2.handleClose();
+	  };
+
+	  this.handleClose = function () {
+	    _this2.setState({ value: null });
+	    _this2.props.onRequestClose();
+	  };
+	};
+
+	exports.default = SaveDialog;
+
+
+	SaveDialog.propTypes = {
+	  open: _react.PropTypes.bool.isRequired,
+	  file: _react.PropTypes.object.isRequired,
+	  onRequestClose: _react.PropTypes.func.isRequired
+	};
 
 /***/ }
 /******/ ]);
