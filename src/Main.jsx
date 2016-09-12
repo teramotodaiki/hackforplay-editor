@@ -1,7 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Model} from 'postmate/build/postmate.min';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -10,6 +9,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 
+import {Model} from './LoosePostmate';
 import Dock from './Dock';
 import Menu from './Menu';
 import Pane from './Pane';
