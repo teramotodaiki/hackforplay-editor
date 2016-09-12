@@ -21510,7 +21510,13 @@
 	      _this.setState({ files: files });
 	    };
 
+	    _this.runRequest = function () {
+	      if (!_this.parent) return;
+	      _this.parent.emit('run', _this.state.files);
+	    };
+
 	    new _LoosePostmate.Model({}).then(function (parent) {
+	      _this.parent = parent;
 	      var files = parent.model.files;
 	      _this.setState({ files: files });
 	    });
@@ -21545,6 +21551,7 @@
 	              align: align,
 	              files: files,
 	              setDockAlign: this.setDockAlign,
+	              runRequest: this.runRequest,
 	              style: { flex: '0 0 auto' }
 	            }),
 	            _react2.default.createElement(_Pane2.default, {
@@ -58706,6 +58713,10 @@
 
 	var _fileDownload2 = _interopRequireDefault(_fileDownload);
 
+	var _powerSettingsNew = __webpack_require__(553);
+
+	var _powerSettingsNew2 = _interopRequireDefault(_powerSettingsNew);
+
 	var _SaveDialog = __webpack_require__(541);
 
 	var _SaveDialog2 = _interopRequireDefault(_SaveDialog);
@@ -58763,7 +58774,9 @@
 	      var _state = this.state;
 	      var openSaveDialog = _state.openSaveDialog;
 	      var saveFile = _state.saveFile;
-	      var style = this.props.style;
+	      var _props = this.props;
+	      var style = _props.style;
+	      var runRequest = _props.runRequest;
 
 
 	      return _react2.default.createElement(
@@ -58774,6 +58787,7 @@
 	          file: saveFile,
 	          onRequestClose: this.closeSaveDialog
 	        }),
+	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_powerSettingsNew2.default, null), onClick: runRequest }),
 	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_fileDownload2.default, null), onClick: this.saveClicked }),
 	        _react2.default.createElement(_materialUi.FlatButton, { icon: _react2.default.createElement(_swapHoriz2.default, null), onClick: this.swapClicked })
 	      );
@@ -58790,6 +58804,7 @@
 	  align: _react.PropTypes.string.isRequired,
 	  files: _react.PropTypes.array.isRequired,
 	  setDockAlign: _react.PropTypes.func.isRequired,
+	  runRequest: _react.PropTypes.func.isRequired,
 	  style: _react.PropTypes.object.isRequired
 	};
 
@@ -69768,6 +69783,43 @@
 	ContentSave.muiName = 'SvgIcon';
 
 	exports.default = ContentSave;
+
+/***/ },
+/* 553 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _pure = __webpack_require__(369);
+
+	var _pure2 = _interopRequireDefault(_pure);
+
+	var _SvgIcon = __webpack_require__(378);
+
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ActionPowerSettingsNew = function ActionPowerSettingsNew(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z' })
+	  );
+	};
+	ActionPowerSettingsNew = (0, _pure2.default)(ActionPowerSettingsNew);
+	ActionPowerSettingsNew.displayName = 'ActionPowerSettingsNew';
+	ActionPowerSettingsNew.muiName = 'SvgIcon';
+
+	exports.default = ActionPowerSettingsNew;
 
 /***/ }
 /******/ ]);
