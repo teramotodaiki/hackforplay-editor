@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
-import {Dialog, FlatButton, TextField} from 'material-ui';
+import {Dialog, FlatButton, TextField, RaisedButton} from 'material-ui';
+import Save from 'material-ui/svg-icons/content/save';
 
 export default class SaveDialog extends Component {
   constructor(props) {
@@ -7,8 +8,11 @@ export default class SaveDialog extends Component {
     const file = this.props;
 
     this.state = {
-      value: null
+      value: null,
+      fallbackHref: null
     };
+
+    this.isFallback = (typeof document.createElement('a').download === 'undefined');
   }
 
   handleChange = (event) => {
@@ -30,13 +34,20 @@ export default class SaveDialog extends Component {
   }
 
   handleClose = () => {
-    this.setState({ value: null });
+    this.setState({ value: null, fallbackHref: null });
     this.props.onRequestClose();
+  }
+
+  setFallbackHref = () => {
+    const {file} = this.props;
+    const reader = new FileReader();
+    reader.onload = (e) => this.setState({ fallbackHref: reader.result });
+    reader.readAsDataURL(new Blob([file.code]));
   }
 
   render() {
     const {open, file, onRequestClose} = this.props;
-    const {value} = this.state;
+    const {value, fallbackHref} = this.state;
 
     const filename = value !== null ? value : file.filename;
     const actions = [
@@ -50,8 +61,21 @@ export default class SaveDialog extends Component {
         primary={true}
         keyboardFocused={true}
         onTouchTap={this.handleSave}
+        disabled={this.isFallback}
       />
     ];
+
+    if (this.isFallback) {
+      actions.push(
+        <RaisedButton
+          label="Right click to download"
+          ref={this.setFallbackHref}
+          href={fallbackHref}
+          icon={<Save />}
+          primary={true}
+        />
+      );
+    }
 
     return (
       <Dialog
@@ -64,6 +88,7 @@ export default class SaveDialog extends Component {
         <TextField
           value={filename}
           onChange={this.handleChange}
+          disabled={this.isFallback}
         />
       </Dialog>
     );
