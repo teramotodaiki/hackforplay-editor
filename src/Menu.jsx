@@ -1,10 +1,18 @@
 import React, {PropTypes, Component} from 'react';
 import {FlatButton} from 'material-ui';
 import SwapHoriz from 'material-ui/svg-icons/action/swap-horiz';
+import FileDownload from 'material-ui/svg-icons/file/file-download';
+
+import SaveDialog from './SaveDialog';
 
 export default class Menu extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      openSaveDialog: false,
+      saveFile: {}
+    };
   }
 
   swapClicked = (event) => {
@@ -14,21 +22,31 @@ export default class Menu extends Component {
 
   saveClicked = (event) => {
     const {files} = this.props;
-    const file = files[0];
-    // download
-    var event = document.createEvent("MouseEvents");
-    event.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    const elem = document.createElement('a');
-    elem.download = file.filename;
-    elem.href = URL.createObjectURL(new Blob([file.code]));
-    elem.dispatchEvent(event);
+    this.setState({
+      openSaveDialog: true,
+      saveFile: files[0]
+    });
+  }
+
+  closeSaveDialog = () => {
+    this.setState({
+      openSaveDialog: false,
+      saveFile: {}
+    });
   }
 
   render() {
+    const {openSaveDialog, saveFile} = this.state;
     const {style} = this.props;
-    
+
     return (
       <div style={style}>
+        <SaveDialog
+          open={openSaveDialog}
+          file={saveFile}
+          onRequestClose={this.closeSaveDialog}
+        />
+        <FlatButton icon={<FileDownload />} onClick={this.saveClicked}></FlatButton>
         <FlatButton icon={<SwapHoriz />} onClick={this.swapClicked}></FlatButton>
       </div>
     );
