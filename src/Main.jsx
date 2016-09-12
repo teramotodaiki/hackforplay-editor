@@ -53,6 +53,7 @@ export default class Main extends Component {
           <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <Menu
               align={align}
+              files={files}
               setDockAlign={this.setDockAlign}
               style={{ flex: '0 0 auto' }}
             />
