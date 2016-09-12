@@ -1,25 +1,22 @@
-var Postmate = require('postmate/build/postmate.min');
-
-/**
- * The type of messages our frames our sending
- * @type {String}
- */
-var MESSAGE_TYPE = 'application/x-postmate-v1+json';
-
-// Loose handshake
-var sendHandshakeReply = Postmate.Model.prototype.sendHandshakeReply;
-Postmate.Model.prototype.sendHandshakeReply = function () {
-  return sendHandshakeReply.apply(this, arguments)
-    .then(function (info) {
-      // ====> ANY ORIGIN CAN RECIEVE THIS REPLY
-      info.parentOrigin = '*';
-      info.parent.postMessage({
-        postmate: 'handshake-reply',
-        type: MESSAGE_TYPE,
-      }, info.parentOrigin);
-
-      return info;
-    });
+// Un-checked parent origin
+const _addEventListener = addEventListener;
+addEventListener = function () {
+  var args = Array.prototype.slice.call(arguments);
+  if (args[0] === 'message' && typeof args[1] === 'function') {
+    const _listener = args[1];
+    args[1] = function () {
+      var eArgs = Array.prototype.slice.call(arguments);
+      if (eArgs[0].source === parent) {
+        eArgs[0] = {
+          origin: '*', // Ignore origin check
+          data: eArgs[0].data,
+          source: eArgs[0].source
+        };
+      }
+      return _listener.apply(window, eArgs);
+    };
+  }
+  return _addEventListener.apply(window, args);
 };
 
-module.exports = Postmate;
+module.exports = require('postmate/build/postmate.min');
