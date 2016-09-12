@@ -9,6 +9,8 @@ export default class SaveDialog extends Component {
     this.state = {
       value: null
     };
+
+    this.isFallback = (typeof document.createElement('a').download === 'undefined');
   }
 
   handleChange = (event) => {
@@ -50,6 +52,7 @@ export default class SaveDialog extends Component {
         primary={true}
         keyboardFocused={true}
         onTouchTap={this.handleSave}
+        disabled={this.isFallback}
       />
     ];
 
@@ -64,6 +67,7 @@ export default class SaveDialog extends Component {
         <TextField
           value={filename}
           onChange={this.handleChange}
+          disabled={this.isFallback}
         />
       </Dialog>
     );
