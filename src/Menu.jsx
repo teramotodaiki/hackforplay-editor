@@ -2,6 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import {FlatButton} from 'material-ui';
 import SwapHoriz from 'material-ui/svg-icons/action/swap-horiz';
 import FileDownload from 'material-ui/svg-icons/file/file-download';
+import PowerSettingsNew from 'material-ui/svg-icons/action/power-settings-new';
 
 import SaveDialog from './SaveDialog';
 
@@ -37,7 +38,7 @@ export default class Menu extends Component {
 
   render() {
     const {openSaveDialog, saveFile} = this.state;
-    const {style} = this.props;
+    const {style, runRequest} = this.props;
 
     return (
       <div style={style}>
@@ -46,6 +47,7 @@ export default class Menu extends Component {
           file={saveFile}
           onRequestClose={this.closeSaveDialog}
         />
+        <FlatButton icon={<PowerSettingsNew />} onClick={runRequest}></FlatButton>
         <FlatButton icon={<FileDownload />} onClick={this.saveClicked}></FlatButton>
         <FlatButton icon={<SwapHoriz />} onClick={this.swapClicked}></FlatButton>
       </div>
