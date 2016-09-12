@@ -11,8 +11,13 @@ export default class Pane extends Component {
     this.updateCode = this.updateCode.bind(this);
   }
 
-  setEnoughHeight(ref) {
-    ref.getCodeMirror().setSize(null, '100vh');
+  getStyle = (ref) => {
+    this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+  }
+
+  setEnoughHeight = (ref) => {
+    const cm = ref.getCodeMirror();
+    window.addEventListener('resize', () => cm.setSize(this.style.width, this.style.height));
   }
 
   updateCode(index, code) {
@@ -28,16 +33,18 @@ export default class Pane extends Component {
     };
 
     return (
-      <div style={style}>
-      {files.map((file, index) => (
-        <CodeMirror
-          key={file.filename}
-          ref={this.setEnoughHeight}
-          value={file.code}
-          onChange={(code) => this.updateCode(index, code)}
-          options={options}
-        />
-      ))}
+      <div ref={this.getStyle} style={style}>
+        <div style={{ position: 'absolute' }}>
+        {files.map((file, index) => (
+          <CodeMirror
+            key={file.filename}
+            ref={this.setEnoughHeight}
+            value={file.code}
+            onChange={(code) => this.updateCode(index, code)}
+            options={options}
+          />
+        ))}
+        </div>
       </div>
     );
   }
