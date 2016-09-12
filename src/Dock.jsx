@@ -19,17 +19,21 @@ export default class Dock extends Component {
     const {align, edge} = this.props;
 
     const style = {
-      height: '100vh'
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      width: '100%',
+      height: '100%',
     };
 
     return (
-      <div style={style}>
+      <div style={{ width: '100%', height: '100%' }}>
         <Sizer
           align={align}
           edge={edge}
           onDragEnd={this.sizerMoved}
-        ></Sizer>
-        <div>
+        />
+        <div style={style}>
           {this.props.children}
         </div>
       </div>
