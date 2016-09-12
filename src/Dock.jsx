@@ -9,51 +9,49 @@ export default class Dock extends Component {
   }
 
   sizerMoved = (event) => {
-    const x = event.nativeEvent.x;
-    const width = this.props.align === 'right' ? innerWidth - x : x + SizerWidth;
-    this.props.setDockSize({width});
+    const {align, setDockSize} = this.props;
+    const x = event.nativeEvent.clientX + (align === 'left' ? SizerWidth : 0);
+    const y = event.nativeEvent.clientY + (align === 'top' ? SizerWidth : 0);
+    setDockSize({x, y});
   }
 
   render() {
-    const {align, width} = this.props;
+    const {align, edge} = this.props;
 
     const style = {
-      display: 'flex',
-      justifyContent: 'stretch',
-      flexDirection: align === 'right' ? 'row' : 'row-reverse'
+      height: '100vh'
     };
 
     return (
-      <Drawer open={true} openSecondary={align === 'right'} width={width}>
-        <div style={style}>
-          <Sizer
-            onDragEnd={this.sizerMoved}
-            align={align}
-          ></Sizer>
-          <div style={{ flex: '1 1 auto' }}>
-            {this.props.children}
-          </div>
+      <div style={style}>
+        <Sizer
+          align={align}
+          edge={edge}
+          onDragEnd={this.sizerMoved}
+        ></Sizer>
+        <div>
+          {this.props.children}
         </div>
-      </Drawer>
+      </div>
     );
   }
 }
 
 Dock.propTypes = {
   align: PropTypes.string.isRequired,
-  width: PropTypes.number.isRequired,
+  edge: PropTypes.object.isRequired,
   setDockSize: PropTypes.func.isRequired
 };
 
-const Sizer = ({onDragEnd, align}) => (
+const Sizer = ({onDragEnd, align, edge}) => (
   <div
     draggable="true"
     style={{
-      flex: `0 0 ${SizerWidth}px`,
-      marginLeft: align === 'left' ? -SizerWidth : 0,
-      marginRight: align === 'right' ? -SizerWidth : 0,
+      position: 'absolute',
       zIndex: 100,
-      height: '100vh',
+      height: '100%',
+      width: SizerWidth,
+      left: align === 'right' ? 0 : edge.x - SizerWidth,
       cursor: align === 'right' ? 'w-resize' : 'e-resize'
     }}
     onDragEnd={onDragEnd}
