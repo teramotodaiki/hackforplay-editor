@@ -27,7 +27,7 @@ export default class Main extends Component {
     });
 
     this.state = {
-      align: 'right',
+      align: '',
       edge: { x: 0, y: 0 },
       files: []
     };
