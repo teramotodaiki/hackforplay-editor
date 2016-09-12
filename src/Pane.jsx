@@ -8,26 +8,20 @@ export default class Pane extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      code: '// code'
-    };
-
     this.updateCode = this.updateCode.bind(this);
   }
 
-  componentDidMount() {
-    const cm = this.editor && this.editor.getCodeMirror();
-    if (!cm) return;
-    cm.setSize(null, '100vh');
+  setEnoughHeight(ref) {
+    ref.getCodeMirror().setSize(null, '100vh');
   }
 
-  updateCode(code) {
-    this.setState({code});
+  updateCode(index, code) {
+    const {files, updateFile} = this.props;
+    updateFile(index, Object.assign({}, files[index], {code}));
   }
 
   render() {
-    const {code} = this.state;
-    const {style} = this.props;
+    const {style, files} = this.props;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
@@ -35,17 +29,21 @@ export default class Pane extends Component {
 
     return (
       <div style={style}>
+      {files.map((file, index) => (
         <CodeMirror
-          ref={(ref) => this.editor = ref}
-          value={code}
-          onChange={this.updateCode}
+          key={file.filename}
+          ref={this.setEnoughHeight}
+          value={file.code}
+          onChange={(code) => this.updateCode(index, code)}
           options={options}
         />
+      ))}
       </div>
     );
   }
 }
 
 Pane.propTypes = {
-  style: PropTypes.object.isRequired
+  style: PropTypes.object.isRequired,
+  files: PropTypes.array.isRequired
 };

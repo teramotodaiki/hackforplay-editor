@@ -1,6 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {Model} from 'postmate/build/postmate.min';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -17,9 +18,16 @@ export default class Main extends Component {
   constructor(props) {
     super(props);
 
+    new Model({})
+      .then(parent => {
+        const files = parent.model.files;
+        this.setState({files});
+      });
+
     this.state = {
       align: 'right',
-      width: innerWidth / 2
+      width: innerWidth / 2,
+      files: []
     };
   }
 
@@ -31,8 +39,13 @@ export default class Main extends Component {
     this.setState({align});
   }
 
+  updateFile = (index, file) => {
+    const files = this.state.files.map((item, i) => index === i ? file : item);
+    this.setState({files});
+  }
+
   render() {
-    const {align, width} = this.state;
+    const {align, width, files} = this.state;
 
     return (
       <MuiThemeProvider>
@@ -45,6 +58,8 @@ export default class Main extends Component {
             />
             <Pane
               width={width}
+              files={files}
+              updateFile={this.updateFile}
               style={{ flex: '1 1 auto', overflowY: 'scroll' }}
             />
           </div>
