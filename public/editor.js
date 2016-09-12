@@ -21455,11 +21455,11 @@
 
 	var _MuiThemeProvider2 = _interopRequireDefault(_MuiThemeProvider);
 
-	var _postmate = __webpack_require__(330);
-
 	var _reactTapEventPlugin = __webpack_require__(331);
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
+
+	var _LoosePostmate = __webpack_require__(549);
 
 	var _Dock = __webpack_require__(337);
 
@@ -21510,7 +21510,7 @@
 	      _this.setState({ files: files });
 	    };
 
-	    new _postmate.Model({}).then(function (parent) {
+	    new _LoosePostmate.Model({}).then(function (parent) {
 	      var files = parent.model.files;
 	      _this.setState({ files: files });
 	    });
@@ -69470,6 +69470,37 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 549 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Postmate = __webpack_require__(330);
+
+	/**
+	 * The type of messages our frames our sending
+	 * @type {String}
+	 */
+	var MESSAGE_TYPE = 'application/x-postmate-v1+json';
+
+	// Loose handshake
+	var sendHandshakeReply = Postmate.Model.prototype.sendHandshakeReply;
+	Postmate.Model.prototype.sendHandshakeReply = function () {
+	  return sendHandshakeReply.apply(this, arguments)
+	    .then(function (info) {
+	      // ====> ANY ORIGIN CAN RECIEVE THIS REPLY
+	      info.parentOrigin = '*';
+	      info.parent.postMessage({
+	        postmate: 'handshake-reply',
+	        type: MESSAGE_TYPE,
+	      }, info.parentOrigin);
+
+	      return info;
+	    });
+	};
+
+	module.exports = Postmate;
 
 
 /***/ }
