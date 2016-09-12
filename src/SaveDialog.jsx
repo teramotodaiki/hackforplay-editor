@@ -48,6 +48,7 @@ export default class SaveDialog extends Component {
       <FlatButton
         label="Save"
         primary={true}
+        keyboardFocused={true}
         onTouchTap={this.handleSave}
       />
     ];
