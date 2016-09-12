@@ -12,6 +12,18 @@ export default class Menu extends Component {
     setDockAlign(align === 'right' ? 'left' : 'right');
   }
 
+  saveClicked = (event) => {
+    const {files} = this.props;
+    const file = files[0];
+    // download
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    const elem = document.createElement('a');
+    elem.download = file.filename;
+    elem.href = URL.createObjectURL(new Blob([file.code]));
+    elem.dispatchEvent(event);
+  }
+
   render() {
     const {style} = this.props;
     
@@ -25,6 +37,7 @@ export default class Menu extends Component {
 
 Menu.propTypes = {
   align: PropTypes.string.isRequired,
+  files: PropTypes.array.isRequired,
   setDockAlign: PropTypes.func.isRequired,
   style: PropTypes.object.isRequired
 };
