@@ -57,5 +57,6 @@ Menu.propTypes = {
   align: PropTypes.string.isRequired,
   files: PropTypes.array.isRequired,
   setDockAlign: PropTypes.func.isRequired,
+  runRequest: PropTypes.func.isRequired,
   style: PropTypes.object.isRequired
 };

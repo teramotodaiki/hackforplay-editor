@@ -20,6 +20,7 @@ export default class Main extends Component {
 
     new Model({})
       .then(parent => {
+        this.parent = parent;
         const files = parent.model.files;
         this.setState({files});
       });
@@ -44,6 +45,11 @@ export default class Main extends Component {
     this.setState({files});
   }
 
+  runRequest = () => {
+    if (!this.parent) return;
+    this.parent.emit('run', this.state.files);
+  }
+
   render() {
     const {align, width, files} = this.state;
 
@@ -55,6 +61,7 @@ export default class Main extends Component {
               align={align}
               files={files}
               setDockAlign={this.setDockAlign}
+              runRequest={this.runRequest}
               style={{ flex: '0 0 auto' }}
             />
             <Pane
