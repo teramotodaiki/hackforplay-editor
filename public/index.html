@@ -45,17 +45,22 @@
         }
       })
       .then(function (child) {
-        console.log(child);
+
+        // eval them
+        child.on('run', function (files) {
+          files.forEach(function (file) {
+            eval(file.code);
+          });
+        });
+
       });
     });
 
     </script>
     <script id="example1" type="hack">
 
-    // This code will NOT execute. It's a sample!
-    Hack.onload = function () {
-      console.log('Have a nice hack! ;-)');
-    };
+    // This code will execute when run it.
+    alert('Have a nice hack! ;-)');
 
     </script>
   </head>
