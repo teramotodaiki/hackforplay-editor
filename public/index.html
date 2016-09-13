@@ -58,6 +58,9 @@
 
         child.get('view').then(alignment);
         child.on('render', alignment);
+        addEventListener('resize', function () {
+          child.get('view').then(alignment);
+        });
 
         function alignment(view) {
           var x = view.edge.x, y = view.edge.y;

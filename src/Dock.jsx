@@ -10,13 +10,22 @@ export default class Dock extends Component {
 
   sizerMoved = (event) => {
     const {align, setDockSize} = this.props;
+    const {clientX, clientY} = event.nativeEvent;
+    const offset = align === 'left' || align === 'top' ? SizerWidth : 0;
+
     if (align === 'left' || align === 'right') {
       setDockSize({
-        x: event.nativeEvent.clientX + (align === 'left' ? SizerWidth : 0)
+        x: (
+          typeof clientX !== 'undefined' ? clientX :
+          event.nativeEvent.screenX - screenX // issue #16
+        ) + offset
       });
     } else {
       setDockSize({
-        y: event.nativeEvent.clientY + (align === 'top' ? SizerWidth : 0)
+        y: (
+          typeof clientY !== 'undefined' ? clientY :
+          event.nativeEvent.screenY - screenY // issue #16
+        ) + offset
       });
     }
   }
@@ -71,6 +80,11 @@ const Sizer = ({onDragEnd, align, edge}) => {
         cursor
       }}
       onDragEnd={onDragEnd}
+      onDragStart={setDummyDataTransfer}
     />
   );
+};
+
+const setDummyDataTransfer = (event) => {
+  event.nativeEvent.dataTransfer.setData('text/plane', '');
 };
