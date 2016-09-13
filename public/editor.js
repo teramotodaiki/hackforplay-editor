@@ -28846,14 +28846,21 @@
 	      var _this$props = _this.props;
 	      var align = _this$props.align;
 	      var setDockSize = _this$props.setDockSize;
+	      var _event$nativeEvent = event.nativeEvent;
+	      var clientX = _event$nativeEvent.clientX;
+	      var clientY = _event$nativeEvent.clientY;
+
+	      var offset = align === 'left' || align === 'top' ? SizerWidth : 0;
 
 	      if (align === 'left' || align === 'right') {
 	        setDockSize({
-	          x: event.nativeEvent.clientX + (align === 'left' ? SizerWidth : 0)
+	          x: (typeof clientX !== 'undefined' ? clientX : event.nativeEvent.screenX - screenX // issue #16
+	          ) + offset
 	        });
 	      } else {
 	        setDockSize({
-	          y: event.nativeEvent.clientY + (align === 'top' ? SizerWidth : 0)
+	          y: (typeof clientY !== 'undefined' ? clientY : event.nativeEvent.screenY - screenY // issue #16
+	          ) + offset
 	        });
 	      }
 	    };
@@ -28926,8 +28933,13 @@
 	      left: align === 'left' ? edge.x - SizerWidth : 0,
 	      cursor: cursor
 	    },
-	    onDragEnd: onDragEnd
+	    onDragEnd: onDragEnd,
+	    onDragStart: setDummyDataTransfer
 	  });
+	};
+
+	var setDummyDataTransfer = function setDummyDataTransfer(event) {
+	  event.nativeEvent.dataTransfer.setData('text/plane', '');
 	};
 
 /***/ },
