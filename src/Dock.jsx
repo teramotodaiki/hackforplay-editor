@@ -80,6 +80,11 @@ const Sizer = ({onDragEnd, align, edge}) => {
         cursor
       }}
       onDragEnd={onDragEnd}
+      onDragStart={setDummyDataTransfer}
     />
   );
+};
+
+const setDummyDataTransfer = (event) => {
+  event.nativeEvent.dataTransfer.setData('text/plane', '');
 };
