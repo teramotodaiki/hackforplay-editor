@@ -1,11 +1,15 @@
 const WebpackNotifierPlugin = require('webpack-notifier');
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
-  entry: './src/editor',
+  entry: {
+    editor: './src/editor',
+    "editor.min": './src/editor'
+  },
   output: {
     path: __dirname + '/public/',
-    filename: 'editor.js'
+    filename: '[name].js'
   },
   module: {
     loaders: [
@@ -24,6 +28,13 @@ module.exports = {
     extensions: ['', '.js', '.jsx']
   },
   plugins: [
-    new WebpackNotifierPlugin()
+    new WebpackNotifierPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      include: /\.min\.js$/,
+      minimize: true,
+      compress: {
+        warnings: false
+      }
+    })
   ]
 };
