@@ -17,18 +17,12 @@
   },
   "homepage": "https://github.com/teramotodaiki/hackforplay-editor#readme",
   "dependencies": {
-    "body-parser": "~1.15.1",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
-    "express": "~4.13.4",
     "material-ui": "^0.15.4",
-    "morgan": "~1.7.0",
     "postmate": "^1.0.2",
     "react": "^15.3.1",
     "react-codemirror": "^0.2.6",
     "react-dom": "^15.3.1",
-    "react-tap-event-plugin": "^1.0.0",
-    "serve-favicon": "~2.3.0"
+    "react-tap-event-plugin": "^1.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.14.0",
