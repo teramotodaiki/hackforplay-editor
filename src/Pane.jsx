@@ -8,6 +8,12 @@ require('codemirror/lib/codemirror.css');
 const PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
 
 export default class Pane extends Component {
+
+  static propTypes = {
+    style: PropTypes.object.isRequired,
+    files: PropTypes.array.isRequired
+  };
+
   constructor(props) {
     super(props);
 
@@ -72,8 +78,3 @@ export default class Pane extends Component {
     );
   }
 }
-
-Pane.propTypes = {
-  style: PropTypes.object.isRequired,
-  files: PropTypes.array.isRequired
-};
