@@ -44,6 +44,9 @@
           files: [{
             filename: 'main.js',
             code: document.getElementById('example1').textContent.replace(/\n    /g, '\n')
+          }, {
+            filename: 'main2.js',
+            code: document.getElementById('example2').textContent.replace(/\n    /g, '\n')
           }]
         }
       })
@@ -107,6 +110,11 @@
 
     // This code will execute when run it.
     alert('Have a nice hack! ;-)');
+
+    </script>
+    <script id="example2" type="hack">
+
+    alert('Second file');
 
     </script>
   </head>

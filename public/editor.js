@@ -59187,6 +59187,8 @@
 
 	var _reactCodemirror2 = _interopRequireDefault(_reactCodemirror);
 
+	var _materialUi = __webpack_require__(339);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -59198,6 +59200,8 @@
 	__webpack_require__(549);
 	__webpack_require__(550);
 
+	var PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
+
 	var Pane = function (_Component) {
 	  _inherits(Pane, _Component);
 
@@ -59206,14 +59210,10 @@
 
 	    var _this = _possibleConstructorReturn(this, (Pane.__proto__ || Object.getPrototypeOf(Pane)).call(this, props));
 
-	    _this.getStyle = function (ref) {
-	      _this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
-	    };
-
 	    _this.setEnoughHeight = function (ref) {
 	      var cm = ref.getCodeMirror();
-	      window.addEventListener('resize', function () {
-	        return cm.setSize(_this.style.width, _this.style.height);
+	      addEventListener('resize', function () {
+	        return _this.style && cm.setSize(_this.style.width, _this.style.height);
 	      });
 	    };
 
@@ -59222,6 +59222,13 @@
 	  }
 
 	  _createClass(Pane, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
+	      if (!ref) return;
+	      this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+	    }
+	  }, {
 	    key: 'updateCode',
 	    value: function updateCode(index, code) {
 	      var _props = this.props;
@@ -59235,33 +59242,44 @@
 	    value: function render() {
 	      var _this2 = this;
 
-	      var _props2 = this.props;
-	      var style = _props2.style;
-	      var files = _props2.files;
+	      var files = this.props.files;
 
 	      var options = {
 	        lineNumbers: true,
 	        mode: 'javascript'
 	      };
 
+	      var style = Object.assign({
+	        display: 'flex',
+	        flexDirection: 'column'
+	      }, this.props.style);
+
 	      return _react2.default.createElement(
-	        'div',
-	        { ref: this.getStyle, style: style },
-	        _react2.default.createElement(
-	          'div',
-	          { style: { position: 'absolute' } },
-	          files.map(function (file, index) {
-	            return _react2.default.createElement(_reactCodemirror2.default, {
+	        _materialUi.Tabs,
+	        {
+	          style: style,
+	          tabItemContainerStyle: { flex: '0 0 auto' },
+	          contentContainerStyle: { flex: '1 1 auto' },
+	          contentContainerClassName: PANE_CONTENT_CONTAINER
+	        },
+	        files.map(function (file, index) {
+	          return _react2.default.createElement(
+	            _materialUi.Tab,
+	            {
 	              key: file.filename,
+	              label: file.filename,
+	              style: { textTransform: 'none' }
+	            },
+	            _react2.default.createElement(_reactCodemirror2.default, {
 	              ref: _this2.setEnoughHeight,
 	              value: file.code,
 	              onChange: function onChange(code) {
 	                return _this2.updateCode(index, code);
 	              },
 	              options: options
-	            });
-	          })
-	        )
+	            })
+	          );
+	        })
 	      );
 	    }
 	  }]);

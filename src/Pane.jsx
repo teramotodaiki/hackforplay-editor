@@ -1,8 +1,11 @@
-import React, {PropTypes, Component} from 'react';
+import React, { PropTypes, Component } from 'react';
 import CodeMirror from 'react-codemirror';
+import { Tabs, Tab } from 'material-ui';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
+
+const PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
 
 export default class Pane extends Component {
   constructor(props) {
@@ -11,13 +14,15 @@ export default class Pane extends Component {
     this.updateCode = this.updateCode.bind(this);
   }
 
-  getStyle = (ref) => {
+  componentDidMount() {
+    const ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
+    if (!ref) return;
     this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
   }
 
   setEnoughHeight = (ref) => {
     const cm = ref.getCodeMirror();
-    window.addEventListener('resize', () => cm.setSize(this.style.width, this.style.height));
+    addEventListener('resize', () => this.style && cm.setSize(this.style.width, this.style.height));
   }
 
   updateCode(index, code) {
@@ -26,26 +31,39 @@ export default class Pane extends Component {
   }
 
   render() {
-    const {style, files} = this.props;
+    const {files} = this.props;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
     };
 
+    const style = Object.assign({
+      display: 'flex',
+      flexDirection: 'column'
+    }, this.props.style);
+
     return (
-      <div ref={this.getStyle} style={style}>
-        <div style={{ position: 'absolute' }}>
-        {files.map((file, index) => (
+      <Tabs
+        style={style}
+        tabItemContainerStyle={{ flex: '0 0 auto' }}
+        contentContainerStyle={{ flex: '1 1 auto' }}
+        contentContainerClassName={PANE_CONTENT_CONTAINER}
+      >
+      {files.map((file, index) => (
+        <Tab
+          key={file.filename}
+          label={file.filename}
+          style={{ textTransform: 'none' }}
+        >
           <CodeMirror
-            key={file.filename}
             ref={this.setEnoughHeight}
             value={file.code}
             onChange={(code) => this.updateCode(index, code)}
             options={options}
           />
-        ))}
-        </div>
-      </div>
+        </Tab>
+      ))}
+      </Tabs>
     );
   }
 }
