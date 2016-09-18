@@ -5,13 +5,20 @@ import { Tabs, Tab } from 'material-ui';
 require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
 
+import ContextMenu from './ContextMenu';
+
 const PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
 
 export default class Pane extends Component {
 
   static propTypes = {
-    style: PropTypes.object.isRequired,
-    files: PropTypes.array.isRequired
+    files: PropTypes.array.isRequired,
+    updateFile: PropTypes.func.isRequired,
+    style: PropTypes.object
+  };
+
+  state = {
+    openContextMenu: {}
   };
 
   constructor(props) {
@@ -41,8 +48,23 @@ export default class Pane extends Component {
     updateFile(index, Object.assign({}, files[index], {code}));
   }
 
+  handleContextMenu(event, filename) {
+    event.preventDefault();
+    const { clientX, clientY } = event.nativeEvent;
+    this.setState({
+      openContextMenu: {
+        [filename]: { absX: clientX, absY: clientY }
+      }
+    });
+  }
+
+  handleContextMenuClose() {
+    this.setState({ openContextMenu: {} });
+  }
+
   render() {
-    const {files} = this.props;
+    const { files } = this.props;
+    const { openContextMenu } = this.state;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
@@ -52,6 +74,12 @@ export default class Pane extends Component {
       display: 'flex',
       flexDirection: 'column'
     }, this.props.style);
+
+    const menuList = [
+      {
+        primaryText: '--right click menu--'
+      }
+    ];
 
     return (
       <Tabs
@@ -65,7 +93,13 @@ export default class Pane extends Component {
           key={file.filename}
           label={file.filename}
           style={{ textTransform: 'none' }}
+          onContextMenu={(e) => this.handleContextMenu(e, file.filename)}
         >
+          <ContextMenu
+            menuList={menuList}
+            openEvent={openContextMenu[file.filename]}
+            onClose={this.handleContextMenuClose}
+          />
           <CodeMirror
             ref={this.setEnoughHeight}
             value={file.code}
