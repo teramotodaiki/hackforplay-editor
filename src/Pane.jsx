@@ -14,15 +14,20 @@ export default class Pane extends Component {
     this.updateCode = this.updateCode.bind(this);
   }
 
-  componentDidMount() {
-    const ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
-    if (!ref) return;
-    this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+  getStyle() {
+    if (!this.style) {
+      const ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
+      if (!ref) return { width: '100%', height: 300 };
+      this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+    }
+    return this.style;
   }
 
   setEnoughHeight = (ref) => {
     const cm = ref.getCodeMirror();
-    addEventListener('resize', () => this.style && cm.setSize(this.style.width, this.style.height));
+    const setSize = () => cm.setSize(this.getStyle().width, this.getStyle().height);
+    setSize();
+    addEventListener('resize', setSize);
   }
 
   updateCode(index, code) {
