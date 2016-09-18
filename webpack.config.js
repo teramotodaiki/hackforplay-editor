@@ -2,10 +2,9 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 const path = require('path');
 const webpack = require('webpack');
 
-module.exports = {
+const config = {
   entry: {
-    editor: './src/editor',
-    "editor.min": './src/editor'
+    editor: './src/editor'
   },
   output: {
     path: __dirname + '/public/',
@@ -29,12 +28,24 @@ module.exports = {
   },
   plugins: [
     new WebpackNotifierPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      include: /\.min\.js$/,
-      minimize: true,
-      compress: {
-        warnings: false
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
       }
     })
-  ]
+  ],
+  devServer: {
+    contentBase: 'public'
+  },
 };
+
+if (process.env.NODE_ENV === 'production') {
+  const uglify = new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
+    }
+  });
+  config.plugins.push(uglify);
+}
+
+module.exports = config;
