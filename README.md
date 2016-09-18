@@ -10,9 +10,7 @@ A provider of open source HackforPlay environment.
 ## Setup
 
 1. npm install
-1. PORT=3000 npm start
-1. http://localhost:3000
+1. npm start
+1. http://localhost:8080/
 
-or
-
-1. file://[Your download path]/public/index.html
+Launch [webpack-dev-server](https://github.com/webpack/webpack-dev-server)
