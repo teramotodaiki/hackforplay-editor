@@ -15,6 +15,7 @@ import Menu from './Menu';
 import Pane from './Pane';
 
 import SaveDialog from './SaveDialog';
+import RenameDialog from './RenameDialog';
 
 export default class Main extends Component {
   constructor(props) {
@@ -33,7 +34,8 @@ export default class Main extends Component {
       edge: { x: 0, y: 0 },
       files: [],
 
-      saveFile: null
+      saveFile: null,
+      renameFile: null
     };
   }
 
@@ -77,8 +79,22 @@ export default class Main extends Component {
     this.setState({ saveFile: null });
   }
 
+  openRenameDialog = (renameFile) => {
+    this.setState({ renameFile });
+  }
+
+  closeRenameDialog = () => {
+    this.setState({ renameFile: null });
+  }
+
+  updateFilename (file, filename) {
+    const nextFile = Object.assign({}, file, { filename });
+    const files = this.state.files.map(item => item === file ? nextFile : item);
+    this.setState({ files });
+  }
+
   render() {
-    const { align, edge, files, saveFile } = this.state;
+    const { align, edge, files, saveFile, renameFile } = this.state;
 
     return (
       <MuiThemeProvider>
@@ -87,6 +103,12 @@ export default class Main extends Component {
             open={!!saveFile}
             file={saveFile}
             onRequestClose={this.closeSaveDialog}
+          />
+          <RenameDialog
+            open={!!renameFile}
+            file={renameFile}
+            updateFilename={(filename) => this.updateFilename(renameFile, filename)}
+            onRequestClose={this.closeRenameDialog}
           />
           <Menu
             align={align}
@@ -99,6 +121,7 @@ export default class Main extends Component {
           <Pane
             files={files}
             updateFile={this.updateFile}
+            openRenameDialog={this.openRenameDialog}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>
