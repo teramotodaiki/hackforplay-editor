@@ -64,6 +64,12 @@ export default class Main extends Component {
     this.setState({ files });
   }
 
+  switchEntryPoint = (file) => {
+    const files = this.state.files.map((item) =>
+      Object.assign({}, item, { isEntryPoint: item === file }));
+    this.setState({ files });
+  }
+
   runRequest = () => {
     if (!this.parent) return;
     this.parent.emit('run', this.state.files);
@@ -140,6 +146,7 @@ export default class Main extends Component {
             openRenameDialog={this.openRenameDialog}
             openSaveDialog={this.openSaveDialog}
             openDeleteDialog={this.openDeleteDialog}
+            switchEntryPoint={this.switchEntryPoint}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>

@@ -80,6 +80,14 @@ export default class Pane extends Component {
     this.setState({ openContextMenu: {} });
   }
 
+  handleSwitch = () => {
+    const { files, switchEntryPoint } = this.props;
+    const file = files.find((item) => item.filename === this.state.openContextMenu.filename);
+    if (!file) return;
+    switchEntryPoint(file);
+    this.setState({ openContextMenu: {} });
+  }
+
   render() {
     const { files, updateFile } = this.props;
     const { openContextMenu } = this.state;
@@ -101,6 +109,10 @@ export default class Pane extends Component {
       {
         primaryText: 'Rename',
         onTouchTap: this.handleRename
+      },
+      {
+        primaryText: 'Switch entry point',
+        onTouchTap: this.handleSwitch
       },
       {
         primaryText: 'Delete',
