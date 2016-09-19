@@ -3,14 +3,21 @@ import {Dialog, FlatButton, TextField, RaisedButton} from 'material-ui';
 import Save from 'material-ui/svg-icons/content/save';
 
 export default class SaveDialog extends Component {
+
+  static propTypes = {
+    open: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    file: PropTypes.any
+  };
+
+  state = {
+    value: null,
+    fallbackHref: null
+  };
+
   constructor(props) {
     super(props);
     const file = this.props;
-
-    this.state = {
-      value: null,
-      fallbackHref: null
-    };
 
     this.isFallback = (typeof document.createElement('a').download === 'undefined');
   }
@@ -49,7 +56,7 @@ export default class SaveDialog extends Component {
     const {open, file, onRequestClose} = this.props;
     const {value, fallbackHref} = this.state;
 
-    const filename = value !== null ? value : file.filename;
+    const filename = value !== null ? value : file && file.filename;
     const actions = [
       <FlatButton
         label="Cancel"
@@ -94,9 +101,3 @@ export default class SaveDialog extends Component {
     );
   }
 }
-
-SaveDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  file: PropTypes.object.isRequired,
-  onRequestClose: PropTypes.func.isRequired
-};

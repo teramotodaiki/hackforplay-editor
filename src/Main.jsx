@@ -14,6 +14,8 @@ import Dock from './Dock';
 import Menu from './Menu';
 import Pane from './Pane';
 
+import SaveDialog from './SaveDialog';
+
 export default class Main extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +31,9 @@ export default class Main extends Component {
     this.state = {
       align: '',
       edge: { x: 0, y: 0 },
-      files: []
+      files: [],
+
+      saveFile: null
     };
   }
 
@@ -65,17 +69,31 @@ export default class Main extends Component {
     return {align, edge};
   }
 
+  openSaveDialog = (saveFile) => {
+    this.setState({ saveFile });
+  }
+
+  closeSaveDialog = () => {
+    this.setState({ saveFile: null });
+  }
+
   render() {
-    const {align, edge, files} = this.state;
+    const { align, edge, files, saveFile } = this.state;
 
     return (
       <MuiThemeProvider>
         <Dock align={align} edge={edge} setDockSize={this.setDockSize}>
+          <SaveDialog
+            open={!!saveFile}
+            file={saveFile}
+            onRequestClose={this.closeSaveDialog}
+          />
           <Menu
             align={align}
             files={files}
             setDockAlign={this.setDockAlign}
             runRequest={this.runRequest}
+            openSaveDialog={this.openSaveDialog}
             style={{ flex: '0 0 auto' }}
           />
           <Pane
