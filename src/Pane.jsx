@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import CodeMirror from 'react-codemirror';
-import { Tabs, Tab } from 'material-ui';
+import { Tabs, Tab, Badge, Avatar, Chip } from 'material-ui';
+import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
@@ -107,6 +108,13 @@ export default class Pane extends Component {
       }
     ];
 
+
+    const tabLabels = files.map(file => file.isEntryPoint ? (
+      <span>
+        <PlayCircleOutline color="white" style={{ marginBottom: -6, marginRight: 10 }} />{file.filename}
+      </span>
+    ) : file.filename);
+
     return (
       <Tabs
         style={style}
@@ -117,7 +125,7 @@ export default class Pane extends Component {
       {files.map((file, index) => (
         <Tab
           key={file.filename}
-          label={file.filename}
+          label={tabLabels[index]}
           style={{ textTransform: 'none' }}
           onContextMenu={(e) => this.handleContextMenu(e, file.filename)}
         >
