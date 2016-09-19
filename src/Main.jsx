@@ -137,7 +137,6 @@ export default class Main extends Component {
             files={files}
             setDockAlign={this.setDockAlign}
             runRequest={this.runRequest}
-            openSaveDialog={this.openSaveDialog}
             style={{ flex: '0 0 auto' }}
           />
           <Pane
