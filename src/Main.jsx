@@ -16,6 +16,7 @@ import Pane from './Pane';
 
 import SaveDialog from './SaveDialog';
 import RenameDialog from './RenameDialog';
+import DeleteDialog from './DeleteDialog';
 
 export default class Main extends Component {
   constructor(props) {
@@ -35,7 +36,8 @@ export default class Main extends Component {
       files: [],
 
       saveFile: null,
-      renameFile: null
+      renameFile: null,
+      deleteFile: null
     };
   }
 
@@ -54,6 +56,11 @@ export default class Main extends Component {
   updateFile = (file, updated) => {
     const nextFile = Object.assign({}, file, updated);
     const files = this.state.files.map((item) => item === file ? nextFile : item);
+    this.setState({ files });
+  }
+
+  removeFile = (file) => {
+    const files = this.state.files.filter((item) => item !== file);
     this.setState({ files });
   }
 
@@ -88,8 +95,16 @@ export default class Main extends Component {
     this.setState({ renameFile: null });
   }
 
+  openDeleteDialog = (deleteFile) => {
+    this.setState({ deleteFile });
+  }
+
+  closeDeleteDialog = () => {
+    this.setState({ deleteFile: null });
+  }
+
   render() {
-    const { align, edge, files, saveFile, renameFile } = this.state;
+    const { align, edge, files, saveFile, renameFile, deleteFile } = this.state;
 
     return (
       <MuiThemeProvider>
@@ -105,6 +120,12 @@ export default class Main extends Component {
             updateFilename={(filename) => this.updateFile(renameFile, { filename })}
             onRequestClose={this.closeRenameDialog}
           />
+          <DeleteDialog
+            open={!!deleteFile}
+            file={deleteFile}
+            deleteFile={this.removeFile}
+            onRequestClose={this.closeDeleteDialog}
+          />
           <Menu
             align={align}
             files={files}
@@ -118,6 +139,7 @@ export default class Main extends Component {
             updateFile={this.updateFile}
             openRenameDialog={this.openRenameDialog}
             openSaveDialog={this.openSaveDialog}
+            openDeleteDialog={this.openDeleteDialog}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>

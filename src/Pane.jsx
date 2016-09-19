@@ -16,6 +16,7 @@ export default class Pane extends Component {
     updateFile: PropTypes.func.isRequired,
     openRenameDialog: PropTypes.func.isRequired,
     openSaveDialog: PropTypes.func.isRequired,
+    openDeleteDialog: PropTypes.func.isRequired,
     style: PropTypes.object
   };
 
@@ -70,6 +71,14 @@ export default class Pane extends Component {
     this.setState({ openContextMenu: {} });
   }
 
+  handleDelete = () => {
+    const { files, openDeleteDialog } = this.props;
+    const file = files.find((item) => item.filename === this.state.openContextMenu.filename);
+    if (!file) return;
+    openDeleteDialog(file);
+    this.setState({ openContextMenu: {} });
+  }
+
   render() {
     const { files, updateFile } = this.props;
     const { openContextMenu } = this.state;
@@ -91,6 +100,10 @@ export default class Pane extends Component {
       {
         primaryText: 'Rename',
         onTouchTap: this.handleRename
+      },
+      {
+        primaryText: 'Delete',
+        onTouchTap: this.handleDelete
       }
     ];
 
