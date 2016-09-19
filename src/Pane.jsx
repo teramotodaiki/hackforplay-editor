@@ -45,10 +45,10 @@ export default class Pane extends Component {
     addEventListener('resize', setSize);
   }
 
-  handleContextMenu(event, filename) {
+  handleContextMenu(event, file) {
     event.preventDefault();
     const { clientX, clientY } = event.nativeEvent;
-    const openContextMenu = { filename, absX: clientX, absY: clientY };
+    const openContextMenu = { file, absX: clientX, absY: clientY };
     this.setState({ openContextMenu });
   }
 
@@ -58,7 +58,7 @@ export default class Pane extends Component {
 
   handleRename = () => {
     const { files, openRenameDialog } = this.props;
-    const file = files.find((item) => item.filename === this.state.openContextMenu.filename);
+    const file = files.find((item) => item === this.state.openContextMenu.file);
     if (!file) return;
     openRenameDialog(file);
     this.setState({ openContextMenu: {} });
@@ -66,7 +66,7 @@ export default class Pane extends Component {
 
   handleSave = () => {
     const { files, openSaveDialog } = this.props;
-    const file = files.find((item) => item.filename === this.state.openContextMenu.filename);
+    const file = files.find((item) => item === this.state.openContextMenu.file);
     if (!file) return;
     openSaveDialog(file);
     this.setState({ openContextMenu: {} });
@@ -74,7 +74,7 @@ export default class Pane extends Component {
 
   handleDelete = () => {
     const { files, openDeleteDialog } = this.props;
-    const file = files.find((item) => item.filename === this.state.openContextMenu.filename);
+    const file = files.find((item) => item === this.state.openContextMenu.file);
     if (!file) return;
     openDeleteDialog(file);
     this.setState({ openContextMenu: {} });
@@ -82,7 +82,7 @@ export default class Pane extends Component {
 
   handleSwitch = () => {
     const { files, switchEntryPoint } = this.props;
-    const file = files.find((item) => item.filename === this.state.openContextMenu.filename);
+    const file = files.find((item) => item === this.state.openContextMenu.file);
     if (!file) return;
     switchEntryPoint(file);
     this.setState({ openContextMenu: {} });
@@ -139,11 +139,11 @@ export default class Pane extends Component {
           key={file.filename}
           label={tabLabels[index]}
           style={{ textTransform: 'none' }}
-          onContextMenu={(e) => this.handleContextMenu(e, file.filename)}
+          onContextMenu={(e) => this.handleContextMenu(e, file)}
         >
           <ContextMenu
             menuList={menuList}
-            openEvent={openContextMenu.filename === file.filename ? openContextMenu : null}
+            openEvent={openContextMenu.file === file ? openContextMenu : null}
             onClose={this.handleContextMenuClose}
           />
           <CodeMirror
