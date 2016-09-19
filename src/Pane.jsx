@@ -1,37 +1,51 @@
 import React, { PropTypes, Component } from 'react';
 import CodeMirror from 'react-codemirror';
 import { Tabs, Tab } from 'material-ui';
+import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
 
+
 const PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
 
 export default class Pane extends Component {
+
+  static propTypes = {
+    files: PropTypes.array.isRequired,
+    updateFile: PropTypes.func.isRequired,
+    onTabContextMenu: PropTypes.func.isRequired,
+    style: PropTypes.object
+  };
+
   constructor(props) {
     super(props);
-
-    this.updateCode = this.updateCode.bind(this);
   }
 
-  componentDidMount() {
-    const ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
-    if (!ref) return;
-    this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+  getStyle() {
+    if (!this.style) {
+      const ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
+      if (!ref) return { width: '100%', height: 300 };
+      this.style = ref.currentStyle || document.defaultView.getComputedStyle(ref);
+    }
+    return this.style;
   }
 
   setEnoughHeight = (ref) => {
     const cm = ref.getCodeMirror();
-    addEventListener('resize', () => this.style && cm.setSize(this.style.width, this.style.height));
+    const setSize = () => cm.setSize(this.getStyle().width, this.getStyle().height);
+    setSize();
+    addEventListener('resize', setSize); // TODO: Should remove event listener in file removed
   }
 
-  updateCode(index, code) {
-    const {files, updateFile} = this.props;
-    updateFile(index, Object.assign({}, files[index], {code}));
+  handleContextMenu(event, file) {
+    event.preventDefault();
+    const { clientX, clientY } = event.nativeEvent;
+    this.props.onTabContextMenu({ file, event: { absX: clientX, absY: clientY } });
   }
 
   render() {
-    const {files} = this.props;
+    const { files, updateFile } = this.props;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
@@ -41,6 +55,12 @@ export default class Pane extends Component {
       display: 'flex',
       flexDirection: 'column'
     }, this.props.style);
+
+    const tabLabels = files.map(file => file.isEntryPoint ? (
+      <span>
+        <PlayCircleOutline color="white" style={{ marginBottom: -6, marginRight: 10 }} />{file.filename}
+      </span>
+    ) : file.filename);
 
     return (
       <Tabs
@@ -52,13 +72,14 @@ export default class Pane extends Component {
       {files.map((file, index) => (
         <Tab
           key={file.filename}
-          label={file.filename}
+          label={tabLabels[index]}
           style={{ textTransform: 'none' }}
+          onContextMenu={(e) => this.handleContextMenu(e, file)}
         >
           <CodeMirror
             ref={this.setEnoughHeight}
             value={file.code}
-            onChange={(code) => this.updateCode(index, code)}
+            onChange={(code) => updateFile(file, { code })}
             options={options}
           />
         </Tab>
@@ -67,8 +88,3 @@ export default class Pane extends Component {
     );
   }
 }
-
-Pane.propTypes = {
-  style: PropTypes.object.isRequired,
-  files: PropTypes.array.isRequired
-};
