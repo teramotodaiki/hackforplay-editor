@@ -117,6 +117,7 @@ export default class Main extends Component {
             files={files}
             updateFile={this.updateFile}
             openRenameDialog={this.openRenameDialog}
+            openSaveDialog={this.openSaveDialog}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>
