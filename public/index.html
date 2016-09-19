@@ -43,7 +43,8 @@
           },
           files: [{
             filename: 'main.js',
-            code: document.getElementById('example1').textContent.replace(/\n    /g, '\n')
+            code: document.getElementById('example1').textContent.replace(/\n    /g, '\n'),
+            isEntryPoint: true
           }, {
             filename: 'main2.js',
             code: document.getElementById('example2').textContent.replace(/\n    /g, '\n')
