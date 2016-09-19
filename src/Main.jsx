@@ -189,7 +189,7 @@ export default class Main extends Component {
           <Pane
             files={files}
             updateFile={this.updateFile}
-            onTabContextMenu={this.handleContextMenuClose}
+            onTabContextMenu={this.handleTabContextMenu}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>
