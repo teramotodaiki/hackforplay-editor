@@ -1,12 +1,11 @@
 import React, { PropTypes, Component } from 'react';
 import CodeMirror from 'react-codemirror';
-import { Tabs, Tab, Badge, Avatar, Chip } from 'material-ui';
+import { Tabs, Tab } from 'material-ui';
 import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
 
-import ContextMenu from './ContextMenu';
 
 const PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
 
@@ -15,14 +14,8 @@ export default class Pane extends Component {
   static propTypes = {
     files: PropTypes.array.isRequired,
     updateFile: PropTypes.func.isRequired,
-    openRenameDialog: PropTypes.func.isRequired,
-    openSaveDialog: PropTypes.func.isRequired,
-    openDeleteDialog: PropTypes.func.isRequired,
+    onTabContextMenu: PropTypes.func.isRequired,
     style: PropTypes.object
-  };
-
-  state = {
-    openContextMenu: {}
   };
 
   constructor(props) {
@@ -42,55 +35,17 @@ export default class Pane extends Component {
     const cm = ref.getCodeMirror();
     const setSize = () => cm.setSize(this.getStyle().width, this.getStyle().height);
     setSize();
-    addEventListener('resize', setSize);
+    addEventListener('resize', setSize); // TODO: Should remove event listener in file removed
   }
 
   handleContextMenu(event, file) {
     event.preventDefault();
     const { clientX, clientY } = event.nativeEvent;
-    const openContextMenu = { file, absX: clientX, absY: clientY };
-    this.setState({ openContextMenu });
-  }
-
-  handleContextMenuClose() {
-    this.setState({ openContextMenu: {} });
-  }
-
-  handleRename = () => {
-    const { files, openRenameDialog } = this.props;
-    const file = files.find((item) => item === this.state.openContextMenu.file);
-    if (!file) return;
-    openRenameDialog(file);
-    this.setState({ openContextMenu: {} });
-  }
-
-  handleSave = () => {
-    const { files, openSaveDialog } = this.props;
-    const file = files.find((item) => item === this.state.openContextMenu.file);
-    if (!file) return;
-    openSaveDialog(file);
-    this.setState({ openContextMenu: {} });
-  }
-
-  handleDelete = () => {
-    const { files, openDeleteDialog } = this.props;
-    const file = files.find((item) => item === this.state.openContextMenu.file);
-    if (!file) return;
-    openDeleteDialog(file);
-    this.setState({ openContextMenu: {} });
-  }
-
-  handleSwitch = () => {
-    const { files, switchEntryPoint } = this.props;
-    const file = files.find((item) => item === this.state.openContextMenu.file);
-    if (!file) return;
-    switchEntryPoint(file);
-    this.setState({ openContextMenu: {} });
+    this.props.onTabContextMenu({ file, event: { absX: clientX, absY: clientY } });
   }
 
   render() {
     const { files, updateFile } = this.props;
-    const { openContextMenu } = this.state;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
@@ -100,26 +55,6 @@ export default class Pane extends Component {
       display: 'flex',
       flexDirection: 'column'
     }, this.props.style);
-
-    const menuList = [
-      {
-        primaryText: 'Save as',
-        onTouchTap: this.handleSave
-      },
-      {
-        primaryText: 'Rename',
-        onTouchTap: this.handleRename
-      },
-      {
-        primaryText: 'Switch entry point',
-        onTouchTap: this.handleSwitch
-      },
-      {
-        primaryText: 'Delete',
-        onTouchTap: this.handleDelete
-      }
-    ];
-
 
     const tabLabels = files.map(file => file.isEntryPoint ? (
       <span>
@@ -141,11 +76,6 @@ export default class Pane extends Component {
           style={{ textTransform: 'none' }}
           onContextMenu={(e) => this.handleContextMenu(e, file)}
         >
-          <ContextMenu
-            menuList={menuList}
-            openEvent={openContextMenu.file === file ? openContextMenu : null}
-            onClose={this.handleContextMenuClose}
-          />
           <CodeMirror
             ref={this.setEnoughHeight}
             value={file.code}

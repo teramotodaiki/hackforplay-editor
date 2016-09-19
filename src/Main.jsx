@@ -14,6 +14,7 @@ import Dock from './Dock';
 import Menu from './Menu';
 import Pane from './Pane';
 
+import ContextMenu from './ContextMenu';
 import SaveDialog from './SaveDialog';
 import RenameDialog from './RenameDialog';
 import DeleteDialog from './DeleteDialog';
@@ -35,6 +36,7 @@ export default class Main extends Component {
       edge: { x: 0, y: 0 },
       files: [],
 
+      tabContextMenu: {},
       saveFile: null,
       renameFile: null,
       deleteFile: null
@@ -85,36 +87,81 @@ export default class Main extends Component {
     return {align, edge};
   }
 
-  openSaveDialog = (saveFile) => {
-    this.setState({ saveFile });
-  }
-
   closeSaveDialog = () => {
     this.setState({ saveFile: null });
-  }
-
-  openRenameDialog = (renameFile) => {
-    this.setState({ renameFile });
   }
 
   closeRenameDialog = () => {
     this.setState({ renameFile: null });
   }
 
-  openDeleteDialog = (deleteFile) => {
-    this.setState({ deleteFile });
-  }
-
   closeDeleteDialog = () => {
     this.setState({ deleteFile: null });
   }
 
+  handleTabContextMenu = (tabContextMenu) => {
+    this.setState({ tabContextMenu })
+  }
+
+  handleContextMenuClose() {
+    this.setState({ tabContextMenu: {} });
+  }
+
+  handleSave = () => {
+    const saveFile = this.state.tabContextMenu.file;
+    if (!saveFile) return;
+    this.setState({ saveFile, tabContextMenu: {} });
+  }
+
+  handleRename = () => {
+    const renameFile = this.state.tabContextMenu.file;
+    if (!renameFile) return;
+    this.setState({ renameFile, tabContextMenu: {} });
+  }
+
+  handleSwitch = () => {
+    const switchFile = this.state.tabContextMenu.file;
+    if (!switchFile) return;
+    this.switchEntryPoint(switchFile);
+    this.setState({ tabContextMenu: {} });
+  }
+
+  handleDelete = () => {
+    const deleteFile = this.state.tabContextMenu.file;
+    if (!deleteFile) return;
+    this.setState({ deleteFile, tabContextMenu: {} });
+  }
+
   render() {
-    const { align, edge, files, saveFile, renameFile, deleteFile } = this.state;
+    const { align, edge, files, saveFile, renameFile, deleteFile, tabContextMenu } = this.state;
+
+    const menuList = [
+      {
+        primaryText: 'Save as',
+        onTouchTap: this.handleSave
+      },
+      {
+        primaryText: 'Rename',
+        onTouchTap: this.handleRename
+      },
+      {
+        primaryText: 'Switch entry point',
+        onTouchTap: this.handleSwitch
+      },
+      {
+        primaryText: 'Delete',
+        onTouchTap: this.handleDelete
+      }
+    ];
 
     return (
       <MuiThemeProvider>
         <Dock align={align} edge={edge} setDockSize={this.setDockSize}>
+          <ContextMenu
+            menuList={menuList}
+            openEvent={tabContextMenu.event}
+            onClose={this.handleContextMenuClose}
+          />
           <SaveDialog
             open={!!saveFile}
             file={saveFile}
@@ -142,10 +189,7 @@ export default class Main extends Component {
           <Pane
             files={files}
             updateFile={this.updateFile}
-            openRenameDialog={this.openRenameDialog}
-            openSaveDialog={this.openSaveDialog}
-            openDeleteDialog={this.openDeleteDialog}
-            switchEntryPoint={this.switchEntryPoint}
+            onTabContextMenu={this.handleContextMenuClose}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>
