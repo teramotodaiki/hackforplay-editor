@@ -42,11 +42,6 @@ export default class Pane extends Component {
     addEventListener('resize', setSize);
   }
 
-  updateCode = (index, code) => {
-    const {files, updateFile} = this.props;
-    updateFile(index, Object.assign({}, files[index], {code}));
-  }
-
   handleContextMenu(event, filename) {
     event.preventDefault();
     const { clientX, clientY } = event.nativeEvent;
@@ -67,8 +62,8 @@ export default class Pane extends Component {
   }
 
   render() {
-    const { files } = this.props;
-    const { openContextMenu, renameFileIndex } = this.state;
+    const { files, updateFile } = this.props;
+    const { openContextMenu } = this.state;
     const options = {
       lineNumbers: true,
       mode: 'javascript'
@@ -108,7 +103,7 @@ export default class Pane extends Component {
           <CodeMirror
             ref={this.setEnoughHeight}
             value={file.code}
-            onChange={(code) => this.updateCode(index, code)}
+            onChange={(code) => updateFile(file, { code })}
             options={options}
           />
         </Tab>

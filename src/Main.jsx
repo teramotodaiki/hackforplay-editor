@@ -51,9 +51,10 @@ export default class Main extends Component {
     this.setState({align}, this.renderRequest);
   }
 
-  updateFile = (index, file) => {
-    const files = this.state.files.map((item, i) => index === i ? file : item);
-    this.setState({files});
+  updateFile = (file, updated) => {
+    const nextFile = Object.assign({}, file, updated);
+    const files = this.state.files.map((item) => item === file ? nextFile : item);
+    this.setState({ files });
   }
 
   runRequest = () => {
@@ -87,12 +88,6 @@ export default class Main extends Component {
     this.setState({ renameFile: null });
   }
 
-  updateFilename (file, filename) {
-    const nextFile = Object.assign({}, file, { filename });
-    const files = this.state.files.map(item => item === file ? nextFile : item);
-    this.setState({ files });
-  }
-
   render() {
     const { align, edge, files, saveFile, renameFile } = this.state;
 
@@ -107,7 +102,7 @@ export default class Main extends Component {
           <RenameDialog
             open={!!renameFile}
             file={renameFile}
-            updateFilename={(filename) => this.updateFilename(renameFile, filename)}
+            updateFilename={(filename) => this.updateFile(renameFile, { filename })}
             onRequestClose={this.closeRenameDialog}
           />
           <Menu
