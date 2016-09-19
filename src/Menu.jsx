@@ -1,7 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {FlatButton, DropDownMenu, MenuItem} from 'material-ui';
 import WebAsset from 'material-ui/svg-icons/av/web-asset';
-import FileDownload from 'material-ui/svg-icons/file/file-download';
 import PowerSettingsNew from 'material-ui/svg-icons/action/power-settings-new';
 
 
@@ -12,7 +11,6 @@ export default class Menu extends Component {
     files: PropTypes.array.isRequired,
     setDockAlign: PropTypes.func.isRequired,
     runRequest: PropTypes.func.isRequired,
-    openSaveDialog: PropTypes.func.isRequired,
     style: PropTypes.object
   };
 
@@ -24,20 +22,14 @@ export default class Menu extends Component {
     this.props.setDockAlign(value);
   }
 
-  saveClicked = (event) => {
-    const { files, openSaveDialog } = this.props;
-    openSaveDialog(files[0]);
-  }
-
   render() {
-    const { align, style, runRequest, openSaveDialog } = this.props;
+    const { align, style, runRequest } = this.props;
 
     const rotate = (deg) => ({ transform: `rotate(${deg}deg)` });
 
     return (
       <div style={style}>
         <FlatButton icon={<PowerSettingsNew />} onClick={runRequest}></FlatButton>
-        <FlatButton icon={<FileDownload />} onClick={this.saveClicked}></FlatButton>
         <DropDownMenu value={align} onChange={this.handleAlignChange}>
           <MenuItem value="top" primaryText="T" leftIcon={<WebAsset style={rotate(0)} />} />
           <MenuItem value="right" primaryText="R" leftIcon={<WebAsset style={rotate(90)} />} />
