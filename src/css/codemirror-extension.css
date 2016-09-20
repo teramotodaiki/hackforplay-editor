@@ -3,7 +3,9 @@
     position: absolute;
     color: #ccc;
     border-left: solid 1px;
+    visibility: hidden;
 }
 
 .ReactCodeMirror__tab-visible .cm-tab:before {
+    visibility: visible;
 }
