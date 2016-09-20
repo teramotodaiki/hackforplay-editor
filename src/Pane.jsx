@@ -48,7 +48,9 @@ export default class Pane extends Component {
     const { files, updateFile } = this.props;
     const options = {
       lineNumbers: true,
-      mode: 'javascript'
+      mode: 'javascript',
+      indentUnit: 4,
+      indentWithTabs: true,
     };
 
     const style = Object.assign({

@@ -19,6 +19,8 @@ import SaveDialog from './SaveDialog';
 import RenameDialog from './RenameDialog';
 import DeleteDialog from './DeleteDialog';
 
+import CodeMirrorTabStyle from './CodeMirrorTabStyle';
+
 export default class Main extends Component {
   constructor(props) {
     super(props);
@@ -39,7 +41,10 @@ export default class Main extends Component {
       tabContextMenu: {},
       saveFile: null,
       renameFile: null,
-      deleteFile: null
+      deleteFile: null,
+
+      tabVisible: false
+
     };
   }
 
@@ -76,6 +81,12 @@ export default class Main extends Component {
     if (!this.parent) return;
     this.parent.emit('run', this.state.files);
   }
+
+
+  toggleTabVisible = () => {
+      this.setState({ tabVisible: !this.state.tabVisible });
+  }
+
 
   renderRequest = () => {
     if (!this.parent) return;
@@ -133,7 +144,7 @@ export default class Main extends Component {
   }
 
   render() {
-    const { align, edge, files, saveFile, renameFile, deleteFile, tabContextMenu } = this.state;
+    const { align, edge, files, saveFile, renameFile, deleteFile, tabContextMenu, tabVisible } = this.state;
 
     const menuList = [
       {
@@ -157,6 +168,7 @@ export default class Main extends Component {
     return (
       <MuiThemeProvider>
         <Dock align={align} edge={edge} setDockSize={this.setDockSize}>
+          <CodeMirrorTabStyle visibility={tabVisible} />
           <ContextMenu
             menuList={menuList}
             openEvent={tabContextMenu.event}
@@ -184,6 +196,7 @@ export default class Main extends Component {
             files={files}
             setDockAlign={this.setDockAlign}
             runRequest={this.runRequest}
+            toggleTabVisible={this.toggleTabVisible}
             style={{ flex: '0 0 auto' }}
           />
           <Pane
