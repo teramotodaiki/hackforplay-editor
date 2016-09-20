@@ -1,0 +1,9 @@
+.cm-tab:before {
+    content: '----';
+    position: absolute;
+    color: #ccc;
+    border-left: solid 1px;
+}
+
+.ReactCodeMirror__tab-visible .cm-tab:before {
+}

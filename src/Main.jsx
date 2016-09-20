@@ -19,8 +19,6 @@ import SaveDialog from './SaveDialog';
 import RenameDialog from './RenameDialog';
 import DeleteDialog from './DeleteDialog';
 
-import CodeMirrorTabStyle from './CodeMirrorTabStyle';
-
 export default class Main extends Component {
   constructor(props) {
     super(props);
@@ -168,7 +166,6 @@ export default class Main extends Component {
     return (
       <MuiThemeProvider>
         <Dock align={align} edge={edge} setDockSize={this.setDockSize}>
-          <CodeMirrorTabStyle visibility={tabVisible} />
           <ContextMenu
             menuList={menuList}
             openEvent={tabContextMenu.event}
@@ -203,6 +200,7 @@ export default class Main extends Component {
             files={files}
             updateFile={this.updateFile}
             onTabContextMenu={this.handleTabContextMenu}
+            tabVisible={tabVisible}
             style={{ flex: '1 1 auto' }}
           />
         </Dock>

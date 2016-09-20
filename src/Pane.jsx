@@ -5,6 +5,7 @@ import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/lib/codemirror.css');
+require('./css/codemirror-extension.css');
 
 
 const PANE_CONTENT_CONTAINER = 'PANE_CONTENT_CONTAINER'; // classname
@@ -15,6 +16,7 @@ export default class Pane extends Component {
     files: PropTypes.array.isRequired,
     updateFile: PropTypes.func.isRequired,
     onTabContextMenu: PropTypes.func.isRequired,
+    tabVisible: PropTypes.bool.isRequired,
     style: PropTypes.object
   };
 
@@ -45,7 +47,7 @@ export default class Pane extends Component {
   }
 
   render() {
-    const { files, updateFile } = this.props;
+    const { files, updateFile, tabVisible } = this.props;
     const options = {
       lineNumbers: true,
       mode: 'javascript',
@@ -79,6 +81,7 @@ export default class Pane extends Component {
           onContextMenu={(e) => this.handleContextMenu(e, file)}
         >
           <CodeMirror
+            className={tabVisible ? 'ReactCodeMirror__tab-visible' : ''}
             ref={this.setEnoughHeight}
             value={file.code}
             onChange={(code) => updateFile(file, { code })}
