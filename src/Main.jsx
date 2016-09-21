@@ -10,7 +10,6 @@ injectTapEventPlugin();
 
 
 import {Model} from './LoosePostmate';
-import Dock from './Dock';
 import Menu from './Menu';
 import Pane from './Pane';
 
@@ -27,13 +26,12 @@ export default class Main extends Component {
       view: this.getViewState
     }).then(parent => {
       this.parent = parent;
-      const {align, edge, files} = parent.model;
-      this.setState({align, edge, files});
+      const { view, files } = parent.model;
+      this.setState({ align: view.align, files });
     });
 
     this.state = {
       align: '',
-      edge: { x: 0, y: 0 },
       files: [],
 
       tabContextMenu: {},
@@ -44,14 +42,6 @@ export default class Main extends Component {
       tabVisible: false
 
     };
-  }
-
-  setDockSize = ({x, y}) => {
-    const edge = {
-      x: typeof x === 'number' ? x : this.state.edge.x,
-      y: typeof y === 'number' ? y : this.state.edge.y
-    };
-    this.setState({edge}, this.renderRequest);
   }
 
   setDockAlign = (align) => {
@@ -92,8 +82,8 @@ export default class Main extends Component {
   }
 
   getViewState = () => {
-    const {align, edge} = this.state;
-    return {align, edge};
+    const { align } = this.state;
+    return { align };
   }
 
   closeSaveDialog = () => {
@@ -142,7 +132,7 @@ export default class Main extends Component {
   }
 
   render() {
-    const { align, edge, files, saveFile, renameFile, deleteFile, tabContextMenu, tabVisible } = this.state;
+    const { align, files, saveFile, renameFile, deleteFile, tabContextMenu, tabVisible } = this.state;
 
     const menuList = [
       {
@@ -163,9 +153,17 @@ export default class Main extends Component {
       }
     ];
 
+    const style = {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      width: '100%',
+      height: '100%',
+    };
+
     return (
       <MuiThemeProvider>
-        <Dock align={align} edge={edge} setDockSize={this.setDockSize}>
+        <div style={style}>
           <ContextMenu
             menuList={menuList}
             openEvent={tabContextMenu.event}
@@ -203,7 +201,7 @@ export default class Main extends Component {
             tabVisible={tabVisible}
             style={{ flex: '1 1 auto' }}
           />
-        </Dock>
+        </div>
       </MuiThemeProvider>
     );
   }

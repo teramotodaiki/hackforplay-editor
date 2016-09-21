@@ -30,17 +30,16 @@
       var container = document.createElement('div');
       container.classList.add('h4p__iframe_container');
       document.body.appendChild(container);
+
+      var size = { width: 500, height: 300 };
+      var defaultView = { align: 'right' };
       // Make an iframe and do handshake
       Postmate.debug = true;
       new Postmate({
         container: container,
         url: './editor.html',
         model: {
-          align: 'right',
-          edge: {
-            x: innerWidth / 2,
-            y: innerHeight / 2
-          },
+          view: defaultView,
           files: [{
             filename: 'main.js',
             code: document.getElementById('example1').textContent.replace(/\n    /g, '\n'),
@@ -60,33 +59,28 @@
           });
         });
 
-        child.get('view').then(alignment);
-        child.on('render', alignment);
-        addEventListener('resize', function () {
-          child.get('view').then(alignment);
+        var align = defaultView.align;
+        render();
+        child.on('render', function (view) {
+          align = view.align;
+          render();
         });
 
-        function alignment(view) {
-          var x = view.edge.x, y = view.edge.y;
-          switch (view.align) {
-            case 'top':
-              setRect(0, 0, '100vw', y);
-              break;
-            case 'right':
-              setRect(x, 0, innerWidth - x, '100vh');
-              break;
-            case 'left':
-              setRect(0, 0, x, '100vh');
-              break;
-            case 'bottom':
-              setRect(0, y, '100vw', innerHeight - y);
-          }
+        function render() {
+          var w = size.width, h = size.height;
+          align === 'top'    ? setRect(0, '', '', 0, '100vw', h) :
+          align === 'right'  ? setRect(0, 0, '', '', w, '100vh') :
+          align === 'bottom' ? setRect('', '', 0, 0, '100vw', h) :
+          align === 'left'   ? setRect(0, '', '', 0, w, '100vh') :
+          null;
         }
 
-        function setRect(left, top, width, height) {
+        function setRect(top, right, bottom, left, width, height) {
           var ref = child.frame.style;
-          ref.left = unit(left);
           ref.top = unit(top);
+          ref.right = unit(right);
+          ref.bottom = unit(bottom);
+          ref.left = unit(left);
           ref.width = unit(width);
           ref.height = unit(height);
         }
