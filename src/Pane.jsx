@@ -62,7 +62,10 @@ export default class Pane extends Component {
 
     const tabLabels = files.map(file => file.isEntryPoint ? (
       <span>
-        <PlayCircleOutline color="white" style={{ marginBottom: -6, marginRight: 10 }} />{file.filename}
+        <PlayCircleOutline color="white" style={{ position: 'absolute', marginLeft: '-1rem', marginTop: -4 }} />
+          <span style={{ marginLeft: '1rem' }}>
+            {file.filename}
+          </span>
       </span>
     ) : file.filename);
 
