@@ -3,6 +3,10 @@ import {FlatButton, DropDownMenu, MenuItem} from 'material-ui';
 import WebAsset from 'material-ui/svg-icons/av/web-asset';
 import PowerSettingsNew from 'material-ui/svg-icons/action/power-settings-new';
 
+import HardwareKeyboardTab from 'material-ui/svg-icons/hardware/keyboard-tab';
+
+import ToggleIcon from './ToggleIcon';
+
 
 export default class Menu extends Component {
 
@@ -11,6 +15,7 @@ export default class Menu extends Component {
     files: PropTypes.array.isRequired,
     setDockAlign: PropTypes.func.isRequired,
     runRequest: PropTypes.func.isRequired,
+    toggleTabVisible: PropTypes.func.isRequired,
     style: PropTypes.object
   };
 
@@ -23,13 +28,22 @@ export default class Menu extends Component {
   }
 
   render() {
-    const { align, style, runRequest } = this.props;
+    const { align, style, runRequest, toggleTabVisible } = this.props;
 
     const rotate = (deg) => ({ transform: `rotate(${deg}deg)` });
 
     return (
       <div style={style}>
         <FlatButton icon={<PowerSettingsNew />} onClick={runRequest}></FlatButton>
+
+        <ToggleIcon
+          enable={<HardwareKeyboardTab />}
+          disable={<HardwareKeyboardTab />}
+          onChange={toggleTabVisible}
+        />
+
+
+
         <DropDownMenu value={align} onChange={this.handleAlignChange}>
           <MenuItem value="top" primaryText="T" leftIcon={<WebAsset style={rotate(0)} />} />
           <MenuItem value="right" primaryText="R" leftIcon={<WebAsset style={rotate(90)} />} />
