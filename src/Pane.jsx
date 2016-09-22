@@ -4,7 +4,11 @@ import { Tabs, Tab } from 'material-ui';
 import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
+require('codemirror/addon/hint/show-hint');
+require('codemirror/addon/hint/javascript-hint');
+
 require('codemirror/lib/codemirror.css');
+require('codemirror/addon/hint/show-hint.css')
 require('./css/codemirror-extension.css');
 
 
@@ -24,6 +28,21 @@ export default class Pane extends Component {
     super(props);
   }
 
+  handleCodemirror = (ref) => {
+    const cm = ref.getCodeMirror();
+    this.showHint(cm);
+    this.setEnoughHeight(cm);
+  }
+
+  showHint(cm) {
+    cm.on('change', () => {
+      const token = cm.getTokenAt(cm.getCursor());
+      if (['variable', 'property'].indexOf(token.type) !== -1) {
+        cm.showHint({ completeSingle: false });
+      }
+    });
+  }
+
   getStyle() {
     if (!this.style) {
       const ref = document.querySelector('.' + PANE_CONTENT_CONTAINER);
@@ -33,8 +52,7 @@ export default class Pane extends Component {
     return this.style;
   }
 
-  setEnoughHeight = (ref) => {
-    const cm = ref.getCodeMirror();
+  setEnoughHeight(cm) {
     const setSize = () => cm.setSize(this.getStyle().width, this.getStyle().height);
     setSize();
     addEventListener('resize', setSize); // TODO: Should remove event listener in file removed
@@ -85,7 +103,7 @@ export default class Pane extends Component {
         >
           <CodeMirror
             className={tabVisible ? 'ReactCodeMirror__tab-visible' : ''}
-            ref={this.setEnoughHeight}
+            ref={this.handleCodemirror}
             value={file.code}
             onChange={(code) => updateFile(file, { code })}
             options={options}
