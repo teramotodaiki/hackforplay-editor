@@ -9,3 +9,7 @@
 .ReactCodeMirror__tab-visible .cm-tab:before {
     visibility: visible;
 }
+
+li.CodeMirror-hint-snippet {
+  font-style: italic;
+}

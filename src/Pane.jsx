@@ -5,7 +5,7 @@ import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/hint/show-hint');
-require('codemirror/addon/hint/javascript-hint');
+require('./codemirror-hint-extension');
 
 require('codemirror/lib/codemirror.css');
 require('codemirror/addon/hint/show-hint.css')
@@ -35,9 +35,10 @@ export default class Pane extends Component {
   }
 
   showHint(cm) {
-    cm.on('change', () => {
+    cm.on('change', (_cm, change) => {
+      if (change.origin === 'setValue') return;
       const token = cm.getTokenAt(cm.getCursor());
-      if (['variable', 'property'].indexOf(token.type) !== -1) {
+      if (token.type !== null) {
         cm.showHint({ completeSingle: false });
       }
     });
