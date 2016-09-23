@@ -1,6 +1,6 @@
 // Un-checked parent origin
-const _addEventListener = addEventListener;
-addEventListener = function () {
+const _addEventListener = window.addEventListener;
+window.addEventListener = function () {
   var args = Array.prototype.slice.call(arguments);
   if (args[0] === 'message' && typeof args[1] === 'function') {
     const _listener = args[1];
