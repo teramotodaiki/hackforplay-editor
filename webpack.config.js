@@ -13,7 +13,7 @@ const config = {
   module: {
     loaders: [
       {
-        test: /\.jsx$/,
+        test: /\.(jsx|js)$/,
         loaders: ["babel"],
         exclude: /node_modules/,
       },
