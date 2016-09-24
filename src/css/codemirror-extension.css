@@ -17,3 +17,8 @@
 li.CodeMirror-hint-snippet {
   font-style: italic;
 }
+
+.ReactCodeMirror .CodeMirror .CodeMirror-matchingbracket {
+	color: inherit;
+	border-bottom: 1px solid black;
+}
