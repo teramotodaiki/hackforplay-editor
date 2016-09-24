@@ -5,6 +5,8 @@ import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/hint/show-hint');
+require('codemirror/addon/edit/closebrackets');
+require('codemirror/addon/edit/matchbrackets');
 require('./codemirror-hint-extension');
 
 require('codemirror/lib/codemirror.css');
@@ -72,6 +74,8 @@ export default class Pane extends Component {
       mode: 'javascript',
       indentUnit: 4,
       indentWithTabs: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
     };
 
     const style = Object.assign({
